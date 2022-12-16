@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/authentication")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -22,8 +22,8 @@ public class AuthController {
     private final AgentService agentService;
     private final JwtUtils jwtUtils;
 
-    @PostMapping("/auth")
-    public ResponseEntity<String> authentication(
+    @PostMapping("/agent")
+    public ResponseEntity<String> agentAuthentication(
             @RequestBody AuthenticationRequest request
     ){
         authenticationManager.authenticate(
@@ -33,6 +33,16 @@ public class AuthController {
         if(user != null){
             return ResponseEntity.ok(jwtUtils.generateToken(user));
         }
+        return ResponseEntity.status(400).body("Some error has occurred");
+    }
+
+    @PostMapping("/customer")
+    public ResponseEntity<String> customerAuthentication(
+            @RequestBody AuthenticationRequest request
+    ){
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
         return ResponseEntity.status(400).body("Some error has occurred");
     }
 }

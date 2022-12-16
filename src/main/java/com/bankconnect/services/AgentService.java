@@ -45,10 +45,15 @@ public class AgentService {
     }
 
     public UserDetails findByEmail(String email){
-        return APPLICATION_USERS
+        Agent user = agentRepository.findAll()
                 .stream()
-                .filter(u -> u.getUsername().equals(email))
+                .filter(u -> u.getEmail().equals(email))
                 .findFirst()
                 .orElseThrow(() -> new UsernameNotFoundException("No user was found"));
+        UserDetails userDetails = new User(
+                user.getEmail(),
+                user.getPassword(),
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_AGENT")));
+        return userDetails;
     }
 }
