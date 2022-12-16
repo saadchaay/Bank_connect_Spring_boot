@@ -39,7 +39,7 @@ public class Customer {
 
     @Basic
     @Column(name = "status", nullable = false)
-    private boolean status;
+    private String status;
 
     public Long getId() {
         return id;
@@ -105,11 +105,11 @@ public class Customer {
         this.cinImage = cinImage;
     }
 
-    public boolean isStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }
