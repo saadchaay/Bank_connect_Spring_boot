@@ -14,8 +14,15 @@ public class Agent {
     private String email;
 
     @Basic
-    @Column(name = "email", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
+
+    public Agent() {}
+
+    public Agent(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 
     public Long getId() {
         return id;
