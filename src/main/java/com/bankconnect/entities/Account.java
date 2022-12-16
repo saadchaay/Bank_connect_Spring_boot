@@ -22,8 +22,8 @@ public class Account {
     private Long customerId;
 
     @Basic
-    @Column(name = "amount", nullable = false)
-    private Double amount;
+    @Column(name = "balance", nullable = false)
+    private Double balance;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", insertable = false, updatable = false)
@@ -62,11 +62,11 @@ public class Account {
     }
 
     public Double getAmount() {
-        return amount;
+        return balance;
     }
 
     public void setAmount(Double amount) {
-        this.amount = amount;
+        this.balance = amount;
     }
 
     public Customer getCustomer() {
