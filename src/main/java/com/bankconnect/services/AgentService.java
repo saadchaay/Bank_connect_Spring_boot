@@ -1,6 +1,7 @@
 package com.bankconnect.services;
 
 import com.bankconnect.entities.Agent;
+import com.bankconnect.helpers.Enum;
 import com.bankconnect.repositories.AgentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,18 +20,6 @@ import java.util.List;
 public class AgentService {
 
     private final AgentRepository agentRepository;
-    private final static List<UserDetails> APPLICATION_USERS = Arrays.asList(
-            new User(
-                    "agent@bank-connect.com",
-                    "password",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_AGENT"))
-            ),
-            new User(
-                    "customer@bank-connect.com",
-                    "password",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_CUSTOMER"))
-            )
-    );
 
     public AgentService(AgentRepository agentRepository) {
         this.agentRepository = agentRepository;
@@ -53,7 +42,7 @@ public class AgentService {
         UserDetails userDetails = new User(
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_AGENT")));
+                Collections.singleton(new SimpleGrantedAuthority(Enum.role.AGENT.toString())));
         return userDetails;
     }
 }
