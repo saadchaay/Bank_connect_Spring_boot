@@ -62,12 +62,6 @@ public class CustomerService {
                 .filter(u -> (u.getEmail()).equals(email))
                 .findFirst()
                 .orElse(null);
-        System.out.println("email: "+user.getEmail());
-//        UserDetails userDetails = new User(
-//                user.getEmail(),
-//                user.getPassword(),
-//                Collections.singleton(new SimpleGrantedAuthority(Enum.role.CUSTOMER.toString())));
-//        return userDetails;
         return user != null ? new User(
                 user.getEmail(),
                 user.getPassword(),

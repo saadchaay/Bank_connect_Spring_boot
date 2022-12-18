@@ -61,7 +61,6 @@ public class SecurityConfig {
     }
 
     private PasswordEncoder passwordEncoder() {
-//        return NoOpPasswordEncoder.getInstance();
         return new BCryptPasswordEncoder();
     }
 
@@ -71,9 +70,6 @@ public class SecurityConfig {
             @Override
             public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
                 return agentService.findByEmail(email) == null ? customerService.findByEmail(email) : agentService.findByEmail(email);
-//                if(agentService != null){
-//                    System.out.println("agent email: "+agentService.findByEmail(email).getUsername());
-//                return null;
             }
         };
     }

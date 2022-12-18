@@ -40,12 +40,6 @@ public class AgentService {
                 .filter(u -> (u.getEmail()).equals(email))
                 .findFirst()
                 .orElse(null);
-//        if(user = null)
-//        UserDetails userDetails = new User(
-//                user.getEmail(),
-//                user.getPassword(),
-//                Collections.singleton(new SimpleGrantedAuthority(Enum.role.AGENT.toString())));
-//        return userDetails;
         return user != null ? new User(
                 user.getEmail(),
                 user.getPassword(),

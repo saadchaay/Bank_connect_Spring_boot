@@ -28,9 +28,6 @@ public class AuthController {
     public ResponseEntity<String> agentAuthentication(
             @RequestBody AuthenticationRequest request
     ){
-        System.out.println("hello");
-        System.out.println("email: "+request.getEmail());
-        System.out.println("password: "+request.getPassword());
         setAuthenticationManager(request.getEmail(), request.getPassword());
         final UserDetails user = agentService.findByEmail(request.getEmail());
         if(user != null){
@@ -43,14 +40,8 @@ public class AuthController {
     public ResponseEntity<String> customerAuthentication(
             @RequestBody AuthenticationRequest request
     ){
-        System.out.println(request.getEmail());
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-//        );
         setAuthenticationManager(request.getEmail(), request.getPassword());
-        System.out.println("after authManager");
         final UserDetails userCustomer = customerService.findByEmail(request.getEmail());
-        System.out.println("after get user");
         if(userCustomer != null){
             return ResponseEntity.ok(jwtUtils.generateToken(userCustomer));
         }
