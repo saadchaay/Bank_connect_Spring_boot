@@ -1,6 +1,7 @@
 package com.bankconnect.services;
 
 import com.bankconnect.entities.Agent;
+import com.bankconnect.helpers.Enum;
 import com.bankconnect.repositories.AgentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,24 +14,13 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Repository
 public class AgentService {
 
     private final AgentRepository agentRepository;
-    private final static List<UserDetails> APPLICATION_USERS = Arrays.asList(
-            new User(
-                    "agent@bank-connect.com",
-                    "password",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_AGENT"))
-            ),
-            new User(
-                    "customer@bank-connect.com",
-                    "password",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_CUSTOMER"))
-            )
-    );
 
     public AgentService(AgentRepository agentRepository) {
         this.agentRepository = agentRepository;
@@ -47,13 +37,12 @@ public class AgentService {
     public UserDetails findByEmail(String email){
         Agent user = agentRepository.findAll()
                 .stream()
-                .filter(u -> u.getEmail().equals(email))
+                .filter(u -> (u.getEmail()).equals(email))
                 .findFirst()
-                .orElseThrow(() -> new UsernameNotFoundException("No user was found"));
-        UserDetails userDetails = new User(
+                .orElse(null);
+        return user != null ? new User(
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_AGENT")));
-        return userDetails;
+                Collections.singleton(new SimpleGrantedAuthority(Enum.role.AGENT.toString()))) : null ;
     }
 }
