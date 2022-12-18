@@ -32,7 +32,7 @@ public class CustomerController {
                 req.getCin(),
                 req.getAddress(),
                 req.getCinImage(),
-                Enum.statusVal.Pending.toString()
+                false
         );
         Request reqAccount = new Request();
         customer.setPassword(BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt(10)));

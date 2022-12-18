@@ -39,11 +39,11 @@ public class Customer {
 
     @Basic
     @Column(name = "status", nullable = false)
-    private String status;
+    private boolean status;
 
     public Customer() {}
 
-    public Customer(String name, String email, String password, String phone, String cin, String address, String cinImage, String status) {
+    public Customer(String name, String email, String password, String phone, String cin, String address, String cinImage, boolean status) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -118,11 +118,11 @@ public class Customer {
         this.cinImage = cinImage;
     }
 
-    public String getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 }

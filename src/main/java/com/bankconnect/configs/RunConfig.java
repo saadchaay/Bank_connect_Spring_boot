@@ -26,7 +26,7 @@ public class RunConfig {
                     "bk675034",
                     "lafarge bouskoura",
                     "545367823948359imGe",
-                    Enum.statusVal.Pending.toString()
+                    false
             );
             cstService.save(customer);
             agService.save(agent);
