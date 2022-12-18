@@ -14,7 +14,7 @@ public class Customer {
     private String name;
 
     @Basic
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Basic

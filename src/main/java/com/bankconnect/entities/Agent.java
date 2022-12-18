@@ -10,7 +10,7 @@ public class Agent {
     private Long id;
 
     @Basic
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Basic

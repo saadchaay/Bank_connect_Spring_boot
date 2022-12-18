@@ -2,13 +2,16 @@ package com.bankconnect.configs;
 
 import com.bankconnect.entities.Agent;
 import com.bankconnect.entities.Customer;
+import com.bankconnect.entities.Request;
+import com.bankconnect.helpers.Enum;
+import com.bankconnect.repositories.RequestRepository;
 import com.bankconnect.services.AgentService;
 import com.bankconnect.services.CustomerService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-//@Configuration
+@Configuration
 public class RunConfig {
 
 //    @Bean
@@ -23,10 +26,20 @@ public class RunConfig {
                     "bk675034",
                     "lafarge bouskoura",
                     "545367823948359imGe",
-                    "Pending"
+                    Enum.statusVal.Pending.toString()
             );
             cstService.save(customer);
             agService.save(agent);
+        };
+    }
+
+//    @Bean
+    CommandLineRunner commandLineRunner(RequestRepository reqRepo){
+        return args -> {
+            Request req = new Request();
+            req.setTypeAccount(Enum.accType.Standard.toString());
+            req.setCustomerId(1L);
+            reqRepo.save(req);
         };
     }
 }

@@ -34,7 +34,7 @@ public class CustomerService {
     }
     public List<Customer> getPendingCustomers(){
         return getAllCustomers().stream()
-                .filter(customer -> customer.getStatus().equals(Enum.statusVal.Pending) )
+                .filter(customer -> customer.getStatus().equals(Enum.statusVal.Pending.toString()) )
                 .collect(Collectors.toList());
     }
     public Customer getCustomerById(Long id){
