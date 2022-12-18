@@ -59,13 +59,18 @@ public class CustomerService {
     public UserDetails findByEmail(String email) {
         Customer user = customerRepository.findAll()
                 .stream()
-                .filter(u -> u.getEmail().equals(email))
+                .filter(u -> (u.getEmail()).equals(email))
                 .findFirst()
-                .orElseThrow(() -> new UsernameNotFoundException("No user was found"));
-        UserDetails userDetails = new User(
+                .orElse(null);
+        System.out.println("email: "+user.getEmail());
+//        UserDetails userDetails = new User(
+//                user.getEmail(),
+//                user.getPassword(),
+//                Collections.singleton(new SimpleGrantedAuthority(Enum.role.CUSTOMER.toString())));
+//        return userDetails;
+        return user != null ? new User(
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singleton(new SimpleGrantedAuthority(Enum.role.CUSTOMER.toString())));
-        return userDetails;
+                Collections.singleton(new SimpleGrantedAuthority(Enum.role.AGENT.toString()))) : null ;
     }
 }

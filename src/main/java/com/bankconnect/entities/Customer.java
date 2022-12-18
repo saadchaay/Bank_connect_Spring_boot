@@ -41,6 +41,19 @@ public class Customer {
     @Column(name = "status", nullable = false)
     private String status;
 
+    public Customer() {}
+
+    public Customer(String name, String email, String password, String phone, String cin, String address, String cinImage, String status) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.cin = cin;
+        this.address = address;
+        this.cinImage = cinImage;
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }

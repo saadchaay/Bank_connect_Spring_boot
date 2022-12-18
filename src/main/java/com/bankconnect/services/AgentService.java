@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Repository
@@ -36,13 +37,18 @@ public class AgentService {
     public UserDetails findByEmail(String email){
         Agent user = agentRepository.findAll()
                 .stream()
-                .filter(u -> u.getEmail().equals(email))
+                .filter(u -> (u.getEmail()).equals(email))
                 .findFirst()
-                .orElseThrow(() -> new UsernameNotFoundException("No user was found"));
-        UserDetails userDetails = new User(
+                .orElse(null);
+//        if(user = null)
+//        UserDetails userDetails = new User(
+//                user.getEmail(),
+//                user.getPassword(),
+//                Collections.singleton(new SimpleGrantedAuthority(Enum.role.AGENT.toString())));
+//        return userDetails;
+        return user != null ? new User(
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singleton(new SimpleGrantedAuthority(Enum.role.AGENT.toString())));
-        return userDetails;
+                Collections.singleton(new SimpleGrantedAuthority(Enum.role.AGENT.toString()))) : null ;
     }
 }

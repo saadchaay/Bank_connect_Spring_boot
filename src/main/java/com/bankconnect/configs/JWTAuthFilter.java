@@ -1,6 +1,7 @@
 package com.bankconnect.configs;
 
 import com.bankconnect.services.AgentService;
+import com.bankconnect.services.CustomerService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class JWTAuthFilter extends OncePerRequestFilter {
 
     private final AgentService agentService;
+    private final CustomerService customerService;
     private final JwtUtils jwtUtils;
 
     @Override
@@ -41,14 +43,18 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         jwtToken = authHeader.substring(7);
         userEmail = jwtUtils.extractUsername(jwtToken);
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = agentService.findByEmail(userEmail);
-
-            if(jwtUtils.isTokenValid(jwtToken, userDetails)){
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            UserDetails userDetails = agentService.findByEmail(userEmail) == null ? customerService.findByEmail(userEmail) : agentService.findByEmail(userEmail);
+            System.out.println(userDetails);
+            if(userDetails != null){
+                if(jwtUtils.isTokenValid(jwtToken, userDetails)){
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+
+
         }
         filterChain.doFilter(request, response);
     }
