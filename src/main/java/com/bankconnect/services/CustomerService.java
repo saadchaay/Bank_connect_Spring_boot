@@ -32,28 +32,37 @@ public class CustomerService {
     public List<Customer> getAllCustomers(){
         return customerRepository.findAll();
     }
+
     public List<Customer> getPendingCustomers(){
         return getAllCustomers().stream()
-                .filter(customer -> customer.getStatus().equals(Enum.statusVal.Pending) )
+                .filter(customer -> !customer.getStatus())
                 .collect(Collectors.toList());
     }
+
     public Customer getCustomerById(Long id){
         Optional customer = customerRepository.findById(id);
         return customer.isPresent()? (Customer) customer.get() : null;
     }
+
     public void deleteCustomerById(Long id){
         if(getCustomerById(id) != null)
             customerRepository.deleteById(id);
     }
+
     public void confirmCustomerById(Long id){
         if(getCustomerById(id) != null){
-            getCustomerById(id).setStatus(String.valueOf(Enum.statusVal.Confirmed));
+            getCustomerById(id).setStatus(true);
         }
     }
-    public void rejectCustomerById(Long id){
-        if(getCustomerById(id) != null){
-            getCustomerById(id).setStatus(String.valueOf(Enum.statusVal.Rejected));
-        }
+
+//    public void rejectCustomerById(Long id){
+//        if(getCustomerById(id) != null){
+//            getCustomerById(id).setStatus(String.valueOf(Enum.statusVal.Rejected));
+//        }
+//    }
+
+    public void activateAccount(Long id){
+        customerRepository.activateAccount(true, id);
     }
 
     public UserDetails findByEmail(String email) {

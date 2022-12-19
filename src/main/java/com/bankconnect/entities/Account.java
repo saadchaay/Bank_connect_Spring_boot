@@ -61,11 +61,11 @@ public class Account {
         this.customerId = customerId;
     }
 
-    public Double getAmount() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setAmount(Double amount) {
+    public void setBalance(Double amount) {
         this.balance = amount;
     }
 
