@@ -113,4 +113,13 @@ public class Virement {
     public void setUpdated(Date updated) {
         this.updated = updated;
     }
+
+    public Virement() {
+    }
+
+    public Virement(Long recAccount, boolean status, Long transactionId) {
+        this.recAccount = recAccount;
+        this.transactionId = transactionId;
+        this.status = status;
+    }
 }

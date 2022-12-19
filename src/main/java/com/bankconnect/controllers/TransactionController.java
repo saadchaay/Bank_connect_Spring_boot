@@ -1,13 +1,17 @@
 package com.bankconnect.controllers;
 
+import com.bankconnect.dto.TransferRequest;
 import com.bankconnect.dto.WithrawRequest;
 import com.bankconnect.entities.Account;
+import com.bankconnect.entities.Virement;
 import com.bankconnect.helpers.Enum;
 import com.bankconnect.dto.DepositRequest;
+import com.bankconnect.entities.Transaction;
 import com.bankconnect.repositories.AccountRepository;
 import com.bankconnect.services.AccountService;
 import com.bankconnect.services.AgentService;
 import com.bankconnect.services.TransactionService;
+import com.bankconnect.services.VirementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,11 +24,13 @@ public class TransactionController {
     private final AgentService agentService;
     private final TransactionService transactionService;
     private final AccountService accountService;
+    private final VirementService virementService;
 
     public TransactionController(AgentService agentService, TransactionService transactionService, AccountRepository accountRepository, AccountService accountService, VirementService virementService) {
         this.agentService = agentService;
         this.transactionService = transactionService;
         this.accountService = accountService;
+        this.virementService = virementService;
     }
 
     @GetMapping("all")
@@ -70,4 +76,32 @@ public class TransactionController {
         }
     }
 
+    @PostMapping("transfer")
+    public ResponseEntity<String> transfer(@RequestBody TransferRequest req){
+        Account account = accountService.getAccountById(req.getAccountId());
+        Account recipientAccount = accountService.getAccountByNumber(req.getRecipientAccountNumber());
+
+        if (account != null && recipientAccount != null) {
+            Long accountId = account.getId();
+            Long recipientAccountId = recipientAccount.getId();
+            double amount = req.getAmount();
+            if(amount <= account.getBalance()) {
+                Transaction transaction = new Transaction(accountId, amount, String.valueOf(Enum.transactionType.Transfer));
+                accountService.substractFromAccountById(amount, accountId);
+                accountService.addToAccountById(amount, recipientAccountId);
+                if (transactionService.save(transaction) != null) {
+                    Virement virement = new Virement(recipientAccountId, false, transaction.getId());
+                    if (virementService.save(virement) != null){
+                        return ResponseEntity.ok("Transfer done successfully");
+                    } else
+                        return ResponseEntity.status(400).body("Transfer failed");
+                } else
+                    return ResponseEntity.status(400).body("Transfer failed");
+            }else{
+                return ResponseEntity.status(400).body("Insufficient balance");
+            }
+        }else{
+            return ResponseEntity.status(400).body("Account not found");
+        }
+    }
 }

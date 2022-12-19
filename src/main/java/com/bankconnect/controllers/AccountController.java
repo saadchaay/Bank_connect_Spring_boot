@@ -1,5 +1,7 @@
 package com.bankconnect.controllers;
 
+import com.bankconnect.dto.DepositRequest;
+import com.bankconnect.dto.RegisterRequest;
 import com.bankconnect.entities.Account;
 import com.bankconnect.entities.Customer;
 import com.bankconnect.services.AccountService;
