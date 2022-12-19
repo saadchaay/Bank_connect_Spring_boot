@@ -1,6 +1,7 @@
 package com.bankconnect.configs;
 
 import com.bankconnect.services.AgentService;
+import com.bankconnect.services.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,13 +28,13 @@ public class SecurityConfig {
 
     private final JWTAuthFilter jwtAuthFilter;
     private final AgentService agentService;
-
+    private final CustomerService customerService;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
             http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/**")
+                .requestMatchers("/auth/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -60,8 +61,7 @@ public class SecurityConfig {
     }
 
     private PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-//        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -69,7 +69,7 @@ public class SecurityConfig {
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-                return agentService.findByEmail(email);
+                return agentService.findByEmail(email) == null ? customerService.findByEmail(email) : agentService.findByEmail(email);
             }
         };
     }
