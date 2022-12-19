@@ -102,4 +102,13 @@ public class Transaction {
     public void setUpdated(Date updated) {
         this.updated = updated;
     }
+
+    public Transaction() {
+    }
+
+    public Transaction(Long accountId , Double amount, String type) {
+        this.type = type;
+        this.amount = amount;
+        this.accountId = accountId;
+    }
 }
