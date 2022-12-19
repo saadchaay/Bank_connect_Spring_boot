@@ -16,4 +16,8 @@ public class RequestService {
     public List<Request> listAll(){
         return requestRepository.findAll();
     }
+
+    public Request getRequestByCustomerId(Long id){
+        return requestRepository.findByCustomerId(id);
+    }
 }

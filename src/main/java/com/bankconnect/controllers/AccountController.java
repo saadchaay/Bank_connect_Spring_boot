@@ -1,5 +1,6 @@
 package com.bankconnect.controllers;
 
+import com.bankconnect.entities.Account;
 import com.bankconnect.entities.Customer;
 import com.bankconnect.services.AccountService;
 import com.bankconnect.services.CustomerService;
@@ -10,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,12 +30,13 @@ public class AccountController {
         return ResponseEntity.ok(accService.getAllAccounts());
     }
 
-    @PostMapping("activate/{accountId}")
+    @GetMapping("activate/{accountId}")
     public ResponseEntity<String> activateAccount(@PathVariable String accountId){
         Customer customer = cstService.getCustomerById(Long.valueOf(accountId));
         if(customer != null){
             if(!customer.getStatus()){
                 cstService.activateAccount(Long.valueOf(accountId));
+                createAccount(customer);
                 return ResponseEntity.ok("Activation an account has been successfully.");
             }
         }
@@ -47,5 +51,33 @@ public class AccountController {
                 .collect(Collectors.toList()));
     }
 
-    // create new account for customer
+
+    public void createAccount(Customer customer){
+        Account account = new Account();
+        account.setBalance(0.0);
+        account.setCustomerId(customer.getId());
+        account.setNumber(Long.parseLong(generateRIB()));
+
+        String accType = reqService.getRequestByCustomerId(customer.getId()).getTypeAccount();
+        account.setType(accType);
+
+        accService.save(account);
+    }
+
+    public String generateRIB(){
+        Random random = new Random();
+        Long number = Math.abs(random.nextLong());
+        List<Account> lst;
+        String ribNumber;
+        System.out.println(number);
+        do {
+            ribNumber = String.format("%024d", number);
+            String finalRibNumber = ribNumber;
+            lst = accService.getAllAccounts().stream()
+                    .filter(a -> a.getNumber() == Long.parseLong(finalRibNumber))
+                    .collect(Collectors.toList());
+        }while (lst.size() > 0);
+        System.out.println(ribNumber);
+        return ribNumber;
+    }
 }
