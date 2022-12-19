@@ -37,7 +37,8 @@ public class AccountService {
         }
     }
     public void addTOAccountById(double amount, Long id){
-        accountRepository.getById(id).setAmount(accountRepository.getById(id).getAmount() + amount);
+        accountRepository.getById(id).setBalance(accountRepository.getById(id).getBalance() + amount);
     }
+
 
 }
