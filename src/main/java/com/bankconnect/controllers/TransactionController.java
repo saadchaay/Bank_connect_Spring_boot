@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("transactions")
+@RequestMapping("customer")
 public class TransactionController {
 
     private final AgentService agentService;
