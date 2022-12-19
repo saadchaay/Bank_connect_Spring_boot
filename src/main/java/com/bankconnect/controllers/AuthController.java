@@ -1,6 +1,6 @@
 package com.bankconnect.controllers;
 
-import com.bankconnect.configs.JwtUtils;
+import com.bankconnect.helpers.JwtUtils;
 import com.bankconnect.dto.AuthenticationRequest;
 import com.bankconnect.services.AgentService;
 import com.bankconnect.services.CustomerService;
