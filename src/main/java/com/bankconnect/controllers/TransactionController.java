@@ -1,7 +1,9 @@
 package com.bankconnect.controllers;
 
+import com.bankconnect.dto.WithrawRequest;
 import com.bankconnect.entities.Account;
 import com.bankconnect.helpers.Enum;
+import com.bankconnect.dto.DepositRequest;
 import com.bankconnect.repositories.AccountRepository;
 import com.bankconnect.services.AccountService;
 import com.bankconnect.services.AgentService;
@@ -43,6 +45,26 @@ public class TransactionController {
             }else
                 return ResponseEntity.status(400).body("Transaction failed");
 
+        }else{
+            return ResponseEntity.status(400).body("Account not found");
+        }
+    }
+
+    @PostMapping("withraw")
+    public ResponseEntity<String> withraw(@RequestBody WithrawRequest req){
+        Account account = accountService.getAccountByNumber(req.getAccountNumber());
+        if(account != null) {
+            Long accountId = account.getId();
+            double amount = req.getAmount();
+            if(amount <= account.getBalance()) {
+                Transaction transaction = new Transaction(accountId, amount, String.valueOf(Enum.transactionType.Withdrawal));
+                accountService.substractFromAccountById(amount, accountId);
+                if (transactionService.save(transaction) != null) {
+                    return ResponseEntity.ok("Transaction done successfully");
+                } else
+                    return ResponseEntity.status(400).body("Transaction failed");
+            }else
+                return ResponseEntity.status(400).body("Insufficient balance");
         }else{
             return ResponseEntity.status(400).body("Account not found");
         }

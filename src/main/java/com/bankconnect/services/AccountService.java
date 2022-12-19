@@ -46,5 +46,11 @@ public class AccountService {
         accountRepository.UpdateAccountBalance(newBalance,id);
     }
 
+    public void substractFromAccountById(double amount, Long id){
+        double newBalance = accountRepository.getById(id).getBalance() - amount;
+        accountRepository.UpdateAccountBalance(newBalance,id);
+    }
+
+
 
 }
