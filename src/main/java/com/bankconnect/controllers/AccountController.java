@@ -6,7 +6,9 @@ import com.bankconnect.services.AccountService;
 import com.bankconnect.services.CustomerService;
 import com.bankconnect.services.RequestService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -49,6 +51,7 @@ public class AccountController {
                 .collect(Collectors.toList()));
     }
 
+
     public void createAccount(Customer customer){
         Account account = new Account();
         account.setBalance(0.0);
@@ -77,6 +80,4 @@ public class AccountController {
         System.out.println(ribNumber);
         return ribNumber;
     }
-
-
 }

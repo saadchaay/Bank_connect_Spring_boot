@@ -1,4 +1,4 @@
-package com.bankconnect.configs;
+package com.bankconnect.helpers;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

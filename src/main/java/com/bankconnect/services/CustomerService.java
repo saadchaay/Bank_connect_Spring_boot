@@ -1,6 +1,5 @@
 package com.bankconnect.services;
 
-import com.bankconnect.entities.Agent;
 import com.bankconnect.entities.Customer;
 import com.bankconnect.helpers.Enum;
 import com.bankconnect.repositories.CustomerRepository;
@@ -8,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -68,12 +66,12 @@ public class CustomerService {
     public UserDetails findByEmail(String email) {
         Customer user = customerRepository.findAll()
                 .stream()
-                .filter(u -> (u.getEmail()).equals(email))
+                .filter(u -> (u.getEmail()).equals(email) && u.getStatus())
                 .findFirst()
                 .orElse(null);
         return user != null ? new User(
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singleton(new SimpleGrantedAuthority(Enum.role.AGENT.toString()))) : null ;
+                Collections.singleton(new SimpleGrantedAuthority(Enum.role.CUSTOMER.toString()))) : null ;
     }
 }

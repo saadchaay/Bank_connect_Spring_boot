@@ -1,5 +1,6 @@
 package com.bankconnect.configs;
 
+import com.bankconnect.helpers.Enum;
 import com.bankconnect.services.AgentService;
 import com.bankconnect.services.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -34,14 +35,20 @@ public class SecurityConfig {
             http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/**", "/register")
+                .requestMatchers("/auth/**", "/register", "/test")
                 .permitAll()
-                .anyRequest()
-                .authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                    .authorizeHttpRequests()
+                    .requestMatchers("/agent/**").hasAnyAuthority(Enum.role.AGENT.toString())
+                    .and()
+                    .authorizeHttpRequests()
+                    .requestMatchers("/customer/**").hasAnyAuthority(Enum.role.CUSTOMER.toString())
+                    .anyRequest()
+                    .authenticated()
+                    .and()
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

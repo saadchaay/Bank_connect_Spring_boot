@@ -2,6 +2,9 @@ package com.bankconnect.entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 @Entity
 public class Transaction {
 
@@ -24,6 +27,25 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "account_id", insertable = false, updatable = false)
     private Account account;
+
+    @Basic
+    @Column
+    private Date created;
+
+    @Basic
+    @Column
+    private Date updated;
+
+    @PrePersist
+    protected void onCreate(){
+        this.created = new Date();
+        this.updated = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate(){
+        this.updated = new Date();
+    }
 
     public Long getId() {
         return id;
@@ -63,5 +85,21 @@ public class Transaction {
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 }

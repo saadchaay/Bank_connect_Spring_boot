@@ -2,6 +2,8 @@ package com.bankconnect.entities;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 public class Virement {
 
@@ -28,6 +30,25 @@ public class Virement {
     @ManyToOne
     @JoinColumn(name = "transaction_id", insertable = false, updatable = false)
     private Transaction transaction;
+
+    @Basic
+    @Column
+    private Date created;
+
+    @Basic
+    @Column
+    private Date updated;
+
+    @PrePersist
+    protected void onCreate(){
+        this.created = new Date();
+        this.updated = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate(){
+        this.updated = new Date();
+    }
 
     public Long getId() {
         return id;
@@ -75,5 +96,21 @@ public class Virement {
 
     public void setTransaction(Transaction transaction) {
         this.transaction = transaction;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 }
