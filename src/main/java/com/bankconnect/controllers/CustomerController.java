@@ -4,11 +4,15 @@ import com.bankconnect.dto.RegisterRequest;
 import com.bankconnect.entities.Customer;
 import com.bankconnect.entities.Request;
 import com.bankconnect.helpers.Enum;
+import com.bankconnect.helpers.TwilioSMS;
 import com.bankconnect.repositories.RequestRepository;
 import com.bankconnect.services.CustomerService;
+import com.twilio.rest.api.v2010.account.Message;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +23,15 @@ public class CustomerController {
 
     private final CustomerService cstService;
     private final RequestRepository reqRepository;
+
+    @Value("${TWILIO_ACCOUNT_SID}")
+    private String TWILIO_SID;
+
+    @Value("${TWILIO_AUTH_TOKEN}")
+    private String TWILIO_AUTH_TOKEN;
+
+    @Value("${TWILIO_PHONE_NUMBER}")
+    private String TWILIO_PHONE_NUMBER;
 
     @PostMapping("register")
     public ResponseEntity<String> register(
@@ -44,6 +57,12 @@ public class CustomerController {
         }else{
             return ResponseEntity.status(400).body("Failed creation customer");
         }
+    }
+
+    @GetMapping("test")
+    public ResponseEntity<String> testSMS(){
+        Message msg = TwilioSMS.sendSMS(TWILIO_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER);
+        return ResponseEntity.ok(msg.getSid());
     }
 
 }
