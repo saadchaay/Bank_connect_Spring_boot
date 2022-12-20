@@ -1,16 +1,13 @@
 package com.bankconnect.controllers;
 
-import com.bankconnect.dto.TransferRequest;
-import com.bankconnect.dto.WithrawRequest;
+import com.bankconnect.dto.*;
 import com.bankconnect.entities.Account;
 import com.bankconnect.entities.Virement;
 import com.bankconnect.helpers.AuthenticatedUserInfo;
 import com.bankconnect.helpers.Enum;
-import com.bankconnect.dto.DepositRequest;
 import com.bankconnect.entities.Transaction;
 import com.bankconnect.repositories.AccountRepository;
 import com.bankconnect.services.*;
-import com.bankconnect.dto.TransactionRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,70 +40,56 @@ public class TransactionController {
     }
 
     @PostMapping("deposit")
-    public ResponseEntity<String> deposit(@RequestBody DepositRequest req){
+    public ResponseEntity<String> deposit(@RequestBody DepotWithdrawRequest req){
         Account account = accountService.getAccountByNumber(req.getAccountNumber());
+        Double amount = req.getAmount();
         if(account != null) {
-            Long accountId = account.getId();
-            double amount = req.getAmount();
-            Transaction transaction = new Transaction(accountId, amount, String.valueOf(Enum.transactionType.Deposit));
-            accountService.addToAccountById(amount, accountId);
-            if(transactionService.save(transaction) != null){
-                return ResponseEntity.ok("Transaction done successfully");
-            }else
-                return ResponseEntity.status(400).body("Transaction failed");
-
+            return deposit(account, amount, String.valueOf(Enum.transactionType.Deposit)) ?
+                    ResponseEntity.ok("Transaction done successfully"):ResponseEntity.status(400).body("Transaction failed");
         }else{
             return ResponseEntity.status(400).body("Account not found");
         }
     }
 
     @PostMapping("withdraw")
-    public ResponseEntity<String> withdraw(@RequestBody WithrawRequest req){
+    public ResponseEntity<String> withdraw(@RequestBody DepotWithdrawRequest req){
         Account account = accountService.getAccountByNumber(req.getAccountNumber());
-        if(account != null) {
-            Long accountId = account.getId();
-            double amount = req.getAmount();
-            if(amount <= account.getBalance()) {
-                Transaction transaction = new Transaction(accountId, amount, String.valueOf(Enum.transactionType.Withdrawal));
-                accountService.subtractFromAccountById(amount, accountId);
-                if (transactionService.save(transaction) != null) {
-                    return ResponseEntity.ok("Transaction done successfully");
-                } else
-                    return ResponseEntity.status(400).body("Transaction failed");
-            }else
-                return ResponseEntity.status(400).body("Insufficient balance");
+        Double amount = req.getAmount();
+        if(account != null && amount <= account.getBalance()) {
+            return withdraw(account, amount, String.valueOf(Enum.transactionType.Withdrawal)) ?
+                    ResponseEntity.ok("Transaction done successfully"):ResponseEntity.status(400).body("Transaction failed");
         }else{
-            return ResponseEntity.status(400).body("Account not found");
+            return ResponseEntity.status(400).body("Failed Transaction");
         }
     }
 
     @PostMapping("transfer")
-    public ResponseEntity<String> transfer(@RequestBody TransferRequest req, HttpServletRequest httpServletRequest){
-//        Customer customer = ;
+    public ResponseEntity<String> transfer(@RequestBody DepotWithdrawRequest req, HttpServletRequest httpServletRequest) {
         Account account = accountService.getAccByCustomer(cstService.getCustomerByEmail(authUserInfo.getEmail(httpServletRequest)));
-        Account recipientAccount = accountService.getAccountByNumber(req.getRecipientAccountNumber());
-        System.out.println(account.getCustomer().getEmail());
-        if (account != null && recipientAccount != null) {
-            Long accountId = account.getId();
-            Long recipientAccountId = recipientAccount.getId();
-            double amount = req.getAmount();
-            if(amount <= account.getBalance()) {
-                Transaction transaction = new Transaction(accountId, amount, String.valueOf(Enum.transactionType.Transfer));
-                accountService.subtractFromAccountById(amount, accountId);
-                accountService.addToAccountById(amount, recipientAccountId);
-                if (transactionService.save(transaction) != null) {
-                    Virement virement = new Virement(recipientAccountId, false, transaction.getId());
-                    if (virementService.save(virement) != null){
-                        return ResponseEntity.ok("Transfer done successfully");
-                    } else
-                        return ResponseEntity.status(400).body("Transfer failed");
-                } else
-                    return ResponseEntity.status(400).body("Transfer failed");
-            }else{
-                return ResponseEntity.status(400).body("Insufficient balance");
-            }
+        Account recipientAccount = accountService.getAccountByNumber(req.getAccountNumber());
+        Double amount = req.getAmount();
+
+        if (recipientAccount != null && amount <= account.getBalance()) {
+            Transaction transaction = new Transaction(
+                    account.getId(), amount,
+                    String.valueOf(Enum.transactionType.Transfer)
+            );
+            accountService.subtractFromAccountById(amount, account);
+            accountService.addToAccountById(amount, recipientAccount.getId());
+
+            if (transactionService.save(transaction) != null) {
+                Virement virement = new Virement(
+                        recipientAccount.getId(),
+                        false,
+                        transaction.getId());
+
+                    return virementService.save(virement) != null ?
+                            ResponseEntity.ok("Transfer done successfully"):
+                            ResponseEntity.status(400).body("Transfer failed");
+            } else
+                return ResponseEntity.status(400).body("Transfer failed");
         }else{
-            return ResponseEntity.status(400).body("Account not found");
+            return ResponseEntity.status(400).body("Transfer failed");
         }
     }
 
@@ -126,5 +109,16 @@ public class TransactionController {
 
 
 
-//    public boolean isValidWithdrawal
+    public boolean deposit(Account acc, Double amount, String transactionType){
+            Long accountId = acc.getId();
+            Transaction transaction = new Transaction(accountId, amount, transactionType);
+            accountService.addToAccountById(amount, accountId);
+            return transactionService.save(transaction) != null;
+    }
+
+    public boolean withdraw(Account acc, Double amount, String transactionType){
+        Transaction transaction = new Transaction(acc.getId(), amount, transactionType);
+        accountService.subtractFromAccountById(amount, acc);
+        return transactionService.save(transaction) != null;
+    }
 }
