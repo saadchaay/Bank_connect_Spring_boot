@@ -42,6 +42,11 @@ public class CustomerService {
         return customer.isPresent()? (Customer) customer.get() : null;
     }
 
+    public Customer getCustomerByEmail(String email){
+        Optional customer = customerRepository.findByEmail(email);
+        return customer.isPresent() ? (Customer) customer.get() : null;
+    }
+
     public void deleteCustomerById(Long id){
         if(getCustomerById(id) != null)
             customerRepository.deleteById(id);

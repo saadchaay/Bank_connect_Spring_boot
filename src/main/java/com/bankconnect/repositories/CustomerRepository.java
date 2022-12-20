@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Repository
 public interface CustomerRepository  extends JpaRepository<Customer,Long> {
 
@@ -15,4 +17,6 @@ public interface CustomerRepository  extends JpaRepository<Customer,Long> {
     @Transactional
     @Query("update Customer c set c.status = :status where c.id = :customer")
     void activateAccount(@Param("status") boolean status, @Param("customer") Long id);
+
+    Optional<Customer> findByEmail(String email);
 }

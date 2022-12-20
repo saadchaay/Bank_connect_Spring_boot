@@ -1,6 +1,7 @@
 package com.bankconnect.repositories;
 
 import com.bankconnect.entities.Account;
+import com.bankconnect.entities.Customer;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,4 +16,6 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     void UpdateAccountBalance(Double amount, Long id);
 
     Account getAccountByNumber(Long accountNum);
+
+    Account getAccountByCustomer(Customer customer);
 }
