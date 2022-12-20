@@ -12,5 +12,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Modifying
     @Query("update Account a set a.balance =?1 where a.id=?2")
-    public void UpdateAccountBalance(Double amount, Long id);
+    void UpdateAccountBalance(Double amount, Long id);
+
+    Account getAccountByNumber(Long accountNum);
 }

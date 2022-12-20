@@ -31,15 +31,26 @@ public class AccountService {
         return account.isPresent() ? (Account) account.get() : null;
     }
 
+    public Account getAccountByNumber(Long accNmb){
+        return accountRepository.getAccountByNumber(accNmb);
+    }
+
     public void deleteAccountById(Long id) {
         if (getAccountById(id) != null) {
             accountRepository.deleteById(id);
         }
     }
 
-    public void addTOAccountById(double amount, Long id){
-        accountRepository.getById(id).setBalance(accountRepository.getById(id).getBalance() + amount);
+    public void addToAccountById(double amount, Long id){
+        double newBalance = accountRepository.getById(id).getBalance() + amount;
+        accountRepository.UpdateAccountBalance(newBalance,id);
     }
+
+    public void substractFromAccountById(double amount, Long id){
+        double newBalance = accountRepository.getById(id).getBalance() - amount;
+        accountRepository.UpdateAccountBalance(newBalance,id);
+    }
+
 
 
 }
