@@ -43,13 +43,13 @@ public class AccountService {
     }
 
     public void addToAccountById(double amount, Long id){
-        double newBalance = accountRepository.getById(id).getBalance() + amount;
+        double newBalance = getAccountById(id).getBalance() + amount;
         accountRepository.UpdateAccountBalance(newBalance,id);
     }
 
-    public void subtractFromAccountById(double amount, Long id){
-        double newBalance = accountRepository.getById(id).getBalance() - amount;
-        accountRepository.UpdateAccountBalance(newBalance,id);
+    public void subtractFromAccountById(double amount, Account acc){
+        double newBalance = getAccountById(acc.getId()).getBalance() - amount;
+        accountRepository.UpdateAccountBalance(newBalance, acc.getId());
     }
 
     public Account getAccByCustomer(Customer customer){

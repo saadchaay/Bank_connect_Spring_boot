@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class DepositRequest {
+public class DepotWithdrawRequest {
     private Long accountNumber;
     private double amount;
 

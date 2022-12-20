@@ -9,7 +9,6 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class TransferRequest {
-    private Long accountId;
     private Long recipientAccountNumber;
     private double amount;
 }
