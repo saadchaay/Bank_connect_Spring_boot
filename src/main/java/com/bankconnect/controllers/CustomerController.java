@@ -3,11 +3,12 @@ package com.bankconnect.controllers;
 import com.bankconnect.dto.RegisterRequest;
 import com.bankconnect.entities.Customer;
 import com.bankconnect.entities.Request;
-import com.bankconnect.helpers.Enum;
+import com.bankconnect.helpers.AuthenticatedUserInfo;
 import com.bankconnect.helpers.TwilioSMS;
 import com.bankconnect.repositories.RequestRepository;
 import com.bankconnect.services.CustomerService;
 import com.twilio.rest.api.v2010.account.Message;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class CustomerController {
 
     private final CustomerService cstService;
     private final RequestRepository reqRepository;
+    private final AuthenticatedUserInfo authUserInfo;
 
     @Value("${TWILIO_ACCOUNT_SID}")
     private String TWILIO_SID;
@@ -63,6 +65,13 @@ public class CustomerController {
     public ResponseEntity<String> testSMS(){
         Message msg = TwilioSMS.sendSMS(TWILIO_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER);
         return ResponseEntity.ok(msg.getSid());
+    }
+
+    @GetMapping("info")
+    public ResponseEntity<Customer> getCustomerInfo(HttpServletRequest req){
+        String email = authUserInfo.getEmail(req);
+        System.out.println(email);
+        return ResponseEntity.ok(cstService.getCustomerByEmail(email));
     }
 
 }

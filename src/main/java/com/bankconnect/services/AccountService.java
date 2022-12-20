@@ -2,6 +2,7 @@ package com.bankconnect.services;
 
 
 import com.bankconnect.entities.Account;
+import com.bankconnect.entities.Customer;
 import com.bankconnect.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,11 +47,13 @@ public class AccountService {
         accountRepository.UpdateAccountBalance(newBalance,id);
     }
 
-    public void substractFromAccountById(double amount, Long id){
+    public void subtractFromAccountById(double amount, Long id){
         double newBalance = accountRepository.getById(id).getBalance() - amount;
         accountRepository.UpdateAccountBalance(newBalance,id);
     }
 
-
+    public Account getAccByCustomer(Customer customer){
+        return accountRepository.getAccountByCustomer(customer);
+    }
 
 }

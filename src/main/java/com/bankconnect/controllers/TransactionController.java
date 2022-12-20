@@ -4,19 +4,17 @@ import com.bankconnect.dto.TransferRequest;
 import com.bankconnect.dto.WithrawRequest;
 import com.bankconnect.entities.Account;
 import com.bankconnect.entities.Virement;
+import com.bankconnect.helpers.AuthenticatedUserInfo;
 import com.bankconnect.helpers.Enum;
 import com.bankconnect.dto.DepositRequest;
 import com.bankconnect.entities.Transaction;
 import com.bankconnect.repositories.AccountRepository;
-import com.bankconnect.services.AccountService;
+import com.bankconnect.services.*;
 import com.bankconnect.dto.TransactionRequest;
-import com.bankconnect.services.AgentService;
-import com.bankconnect.services.TransactionService;
-import com.bankconnect.services.VirementService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,15 +22,19 @@ import java.util.List;
 public class TransactionController {
 
     private final AgentService agentService;
+    private final CustomerService cstService;
     private final TransactionService transactionService;
     private final AccountService accountService;
     private final VirementService virementService;
+    private final AuthenticatedUserInfo authUserInfo;
 
-    public TransactionController(AgentService agentService, TransactionService transactionService, AccountRepository accountRepository, AccountService accountService, VirementService virementService) {
+    public TransactionController(AgentService agentService, CustomerService cstService, TransactionService transactionService, AccountRepository accountRepository, AccountService accountService, VirementService virementService, AuthenticatedUserInfo authUserInfo) {
         this.agentService = agentService;
+        this.cstService = cstService;
         this.transactionService = transactionService;
         this.accountService = accountService;
         this.virementService = virementService;
+        this.authUserInfo = authUserInfo;
     }
 
     @GetMapping("all")
@@ -58,15 +60,15 @@ public class TransactionController {
         }
     }
 
-    @PostMapping("withraw")
-    public ResponseEntity<String> withraw(@RequestBody WithrawRequest req){
+    @PostMapping("withdraw")
+    public ResponseEntity<String> withdraw(@RequestBody WithrawRequest req){
         Account account = accountService.getAccountByNumber(req.getAccountNumber());
         if(account != null) {
             Long accountId = account.getId();
             double amount = req.getAmount();
             if(amount <= account.getBalance()) {
                 Transaction transaction = new Transaction(accountId, amount, String.valueOf(Enum.transactionType.Withdrawal));
-                accountService.substractFromAccountById(amount, accountId);
+                accountService.subtractFromAccountById(amount, accountId);
                 if (transactionService.save(transaction) != null) {
                     return ResponseEntity.ok("Transaction done successfully");
                 } else
@@ -79,17 +81,18 @@ public class TransactionController {
     }
 
     @PostMapping("transfer")
-    public ResponseEntity<String> transfer(@RequestBody TransferRequest req){
-        Account account = accountService.getAccountById(req.getAccountId());
+    public ResponseEntity<String> transfer(@RequestBody TransferRequest req, HttpServletRequest httpServletRequest){
+//        Customer customer = ;
+        Account account = accountService.getAccByCustomer(cstService.getCustomerByEmail(authUserInfo.getEmail(httpServletRequest)));
         Account recipientAccount = accountService.getAccountByNumber(req.getRecipientAccountNumber());
-
+        System.out.println(account.getCustomer().getEmail());
         if (account != null && recipientAccount != null) {
             Long accountId = account.getId();
             Long recipientAccountId = recipientAccount.getId();
             double amount = req.getAmount();
             if(amount <= account.getBalance()) {
                 Transaction transaction = new Transaction(accountId, amount, String.valueOf(Enum.transactionType.Transfer));
-                accountService.substractFromAccountById(amount, accountId);
+                accountService.subtractFromAccountById(amount, accountId);
                 accountService.addToAccountById(amount, recipientAccountId);
                 if (transactionService.save(transaction) != null) {
                     Virement virement = new Virement(recipientAccountId, false, transaction.getId());
@@ -106,6 +109,7 @@ public class TransactionController {
             return ResponseEntity.status(400).body("Account not found");
         }
     }
+
     @PostMapping("online-payment")
     public ResponseEntity<List> createTransaction(
             @RequestBody TransactionRequest request
