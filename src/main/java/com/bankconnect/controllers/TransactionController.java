@@ -9,12 +9,14 @@ import com.bankconnect.dto.DepositRequest;
 import com.bankconnect.entities.Transaction;
 import com.bankconnect.repositories.AccountRepository;
 import com.bankconnect.services.AccountService;
+import com.bankconnect.dto.TransactionRequest;
 import com.bankconnect.services.AgentService;
 import com.bankconnect.services.TransactionService;
 import com.bankconnect.services.VirementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -104,4 +106,21 @@ public class TransactionController {
             return ResponseEntity.status(400).body("Account not found");
         }
     }
+    @PostMapping("online-payment")
+    public ResponseEntity<List> createTransaction(
+            @RequestBody TransactionRequest request
+            ){
+        Transaction transaction = new Transaction();
+        transaction.setAccountId(Long.valueOf(request.getAccountId()));
+        transaction.setAmount(Double.valueOf(request.getAmount()));
+        transaction.setType(request.getTransactionType());
+        if(transactionService.save(transaction) != null){
+            return ResponseEntity.ok(transactionService.getTransactionsPerDay(Long.valueOf(request.getAccountId())));
+        }
+        return ResponseEntity.status(400).build();
+    }
+
+
+
+//    public boolean isValidWithdrawal
 }
