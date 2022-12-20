@@ -57,7 +57,6 @@ public class AccountController {
         account.setBalance(0.0);
         account.setCustomerId(customer.getId());
         account.setNumber(Long.parseLong(generateRIB()));
-
         String accType = reqService.getRequestByCustomerId(customer.getId()).getTypeAccount();
         account.setType(accType);
 
