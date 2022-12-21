@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("customer")
@@ -52,8 +53,8 @@ public class TransactionController {
     }
 
     @PostMapping("withdraw")
-    public ResponseEntity<String> withdraw(@RequestBody DepotWithdrawRequest req){
-        Account account = accountService.getAccountByNumber(req.getAccountNumber());
+    public ResponseEntity<String> withdraw(@RequestBody DepotWithdrawRequest req, HttpServletRequest httpServletRequest){
+        Account account = accountService.getAccByCustomer(cstService.getCustomerByEmail(authUserInfo.getEmail(httpServletRequest)));
         Double amount = req.getAmount();
         if(account != null && amount <= account.getBalance()) {
             return withdraw(account, amount, String.valueOf(Enum.transactionType.Withdrawal)) ?
@@ -116,9 +117,24 @@ public class TransactionController {
             return transactionService.save(transaction) != null;
     }
 
-    public boolean withdraw(Account acc, Double amount, String transactionType){
+    public boolean withdraw(Account acc, Double amount, String transactionType) {
         Transaction transaction = new Transaction(acc.getId(), amount, transactionType);
+        Double totalPerDay = transactionService.getTransactionsPerDay(acc.getId())
+                .stream().filter(trs -> Objects.equals(trs.getType(), Enum.transactionType.Withdrawal.toString()))
+                .mapToDouble(Transaction::getAmount).sum() + amount;
+
+        Double totalPerYear = transactionService.getTransactionsPerYear(acc.getId())
+                .stream().filter(trs -> Objects.equals(trs.getType(), Enum.transactionType.Withdrawal.toString()))
+                .mapToDouble(Transaction::getAmount).sum() + amount;
+
+        if(Objects.equals(acc.getType(), Enum.accType.Standard.toString()) && (totalPerDay > 5000 || totalPerYear > 100000)){
+            return false;
+        }
+        if(Objects.equals(acc.getType(), Enum.accType.Professional.toString()) && (totalPerDay > 10000 || totalPerYear > 200000)){
+            return false;
+        }
         accountService.subtractFromAccountById(amount, acc);
         return transactionService.save(transaction) != null;
     }
+
 }
