@@ -5,4 +5,5 @@ public interface Enum {
     enum statusVal {Pending, Confirmed, Rejected}
     enum transactionType {Transfer, Withdrawal, Deposit, OnlinePayment, FacturePayment}
     enum accType {Standard, Professional}
+    enum bills {Phone, Water, Electricity}
 }
