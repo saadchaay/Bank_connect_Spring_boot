@@ -4,6 +4,7 @@ import com.bankconnect.dto.RegisterRequest;
 import com.bankconnect.entities.Customer;
 import com.bankconnect.entities.Request;
 import com.bankconnect.helpers.AuthenticatedUserInfo;
+import com.bankconnect.helpers.SendMail;
 import com.bankconnect.helpers.TwilioSMS;
 import com.bankconnect.repositories.RequestRepository;
 import com.bankconnect.services.CustomerService;
@@ -13,10 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,21 +23,21 @@ public class CustomerController {
     private final CustomerService cstService;
     private final RequestRepository reqRepository;
     private final AuthenticatedUserInfo authUserInfo;
+    private final SendMail sendMail;
+    private Customer cst;
+    private int codeVer;
 
-    @Value("${TWILIO_ACCOUNT_SID}")
-    private String TWILIO_SID;
+    @Value("${EMAIL_ADDRESS}")
+    private String email;
 
-    @Value("${TWILIO_AUTH_TOKEN}")
-    private String TWILIO_AUTH_TOKEN;
-
-    @Value("${TWILIO_PHONE_NUMBER}")
-    private String TWILIO_PHONE_NUMBER;
+    @Value("${EMAIL_PASSWORD}")
+    private String password;
 
     @PostMapping("register")
     public ResponseEntity<String> register(
             @RequestBody RegisterRequest req
             ){
-        Customer customer = new Customer(
+        cst = new Customer(
                 req.getName(),
                 req.getEmail(),
                 req.getPassword(),
@@ -49,22 +47,35 @@ public class CustomerController {
                 req.getCinImage(),
                 false
         );
-        Request reqAccount = new Request();
-        customer.setPassword(BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt(10)));
-        if(cstService.save(customer) != null){
-            reqAccount.setTypeAccount(req.getAccType());
-            reqAccount.setCustomerId(customer.getId());
-            reqRepository.save(reqAccount);
-            return ResponseEntity.ok("Success registration");
-        }else{
-            return ResponseEntity.status(400).body("Failed creation customer");
-        }
+//        Request reqAccount = new Request();
+        cst.setPassword(BCrypt.hashpw(cst.getPassword(), BCrypt.gensalt(10)));
+        codeVer = generateVerifiedCode();
+        System.out.println(codeVer);
+//        sendMail.sendSimpleMessage(customer.getEmail(), "Code verification", "Code: "+codeVer+" .");
+        return ResponseEntity.ok("Code verification has been sent to you.");
+//        if(cstService.save(customer) != null){
+//            reqAccount.setTypeAccount(req.getAccType());
+//            reqAccount.setCustomerId(customer.getId());
+//            reqRepository.save(reqAccount);
+//            return ResponseEntity.ok("Success registration");
+//        }else{
+//            return ResponseEntity.status(400).body("Failed creation customer");
+//        }
     }
 
-    @GetMapping("test")
-    public ResponseEntity<String> testSMS(){
-        Message msg = TwilioSMS.sendSMS(TWILIO_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER);
-        return ResponseEntity.ok(msg.getSid());
+    @PostMapping("/code-verification")
+    public ResponseEntity<String> verRegistration(
+            @RequestBody RegisterRequest req){
+        Request reqAccount = new Request();
+        if((req.getVerCode() == codeVer) && (cst != null)){
+            if(cstService.save(cst) != null) {
+                reqAccount.setTypeAccount(req.getAccType());
+                reqAccount.setCustomerId(cst.getId());
+                reqRepository.save(reqAccount);
+                return ResponseEntity.ok("Success registration");
+            }
+        }
+        return ResponseEntity.status(400).body("Failed creation customer");
     }
 
     @GetMapping("info")
@@ -74,4 +85,7 @@ public class CustomerController {
         return ResponseEntity.ok(cstService.getCustomerByEmail(email));
     }
 
+    public int generateVerifiedCode(){
+        return (int)Math.floor(Math.random()*(99999-9999+1)+9999);
+    }
 }

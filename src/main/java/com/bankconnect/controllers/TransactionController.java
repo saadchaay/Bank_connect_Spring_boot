@@ -6,7 +6,6 @@ import com.bankconnect.entities.Virement;
 import com.bankconnect.helpers.AuthenticatedUserInfo;
 import com.bankconnect.helpers.Enum;
 import com.bankconnect.entities.Transaction;
-import com.bankconnect.repositories.AccountRepository;
 import com.bankconnect.services.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
@@ -19,15 +18,13 @@ import java.util.Objects;
 @RequestMapping("customer")
 public class TransactionController {
 
-    private final AgentService agentService;
     private final CustomerService cstService;
     private final TransactionService transactionService;
     private final AccountService accountService;
     private final VirementService virementService;
     private final AuthenticatedUserInfo authUserInfo;
 
-    public TransactionController(AgentService agentService, CustomerService cstService, TransactionService transactionService, AccountRepository accountRepository, AccountService accountService, VirementService virementService, AuthenticatedUserInfo authUserInfo) {
-        this.agentService = agentService;
+    public TransactionController(CustomerService cstService, TransactionService transactionService, AccountService accountService, VirementService virementService, AuthenticatedUserInfo authUserInfo) {
         this.cstService = cstService;
         this.transactionService = transactionService;
         this.accountService = accountService;
@@ -36,12 +33,13 @@ public class TransactionController {
     }
 
     @GetMapping("all")
-    public ResponseEntity<List> transactions(){
+    public ResponseEntity<List<Transaction>> transactions(){
         return ResponseEntity.ok(transactionService.getTransactionsByAccountId(1L));
     }
 
     @PostMapping("deposit")
-    public ResponseEntity<String> deposit(@RequestBody DepotWithdrawRequest req){
+    public ResponseEntity<String> deposit(
+            @RequestBody DepotWithdrawRequest req){
         Account account = accountService.getAccountByNumber(req.getAccountNumber());
         Double amount = req.getAmount();
         if(account != null) {
@@ -53,8 +51,10 @@ public class TransactionController {
     }
 
     @PostMapping("withdraw")
-    public ResponseEntity<String> withdraw(@RequestBody DepotWithdrawRequest req, HttpServletRequest httpServletRequest){
-        Account account = accountService.getAccByCustomer(cstService.getCustomerByEmail(authUserInfo.getEmail(httpServletRequest)));
+    public ResponseEntity<String> withdraw(
+            @RequestBody DepotWithdrawRequest req,
+            HttpServletRequest httpSerReq){
+        Account account = accountService.getAccByCustomer(cstService.getCustomerByEmail(authUserInfo.getEmail(httpSerReq)));
         Double amount = req.getAmount();
         if(account != null && amount <= account.getBalance()) {
             return withdraw(account, amount, String.valueOf(Enum.transactionType.Withdrawal)) ?
@@ -65,10 +65,12 @@ public class TransactionController {
     }
 
     @PostMapping("transfer")
-    public ResponseEntity<String> transfer(@RequestBody DepotWithdrawRequest req, HttpServletRequest httpServletRequest) {
-        Account account = accountService.getAccByCustomer(cstService.getCustomerByEmail(authUserInfo.getEmail(httpServletRequest)));
+    public ResponseEntity<String> transfer(
+            @RequestBody DepotWithdrawRequest req,
+            HttpServletRequest httpSerReq) {
+        Account account = accountService.getAccByCustomer(cstService.getCustomerByEmail(authUserInfo.getEmail(httpSerReq)));
         Account recipientAccount = accountService.getAccountByNumber(req.getAccountNumber());
-        Double amount = req.getAmount();
+        double amount = req.getAmount();
 
         if (recipientAccount != null && amount <= account.getBalance()) {
             Transaction transaction = new Transaction(
@@ -95,20 +97,40 @@ public class TransactionController {
     }
 
     @PostMapping("online-payment")
-    public ResponseEntity<List> createTransaction(
-            @RequestBody TransactionRequest request
-            ){
-        Transaction transaction = new Transaction();
-        transaction.setAccountId(Long.valueOf(request.getAccountId()));
-        transaction.setAmount(Double.valueOf(request.getAmount()));
-        transaction.setType(request.getTransactionType());
-        if(transactionService.save(transaction) != null){
-            return ResponseEntity.ok(transactionService.getTransactionsPerDay(Long.valueOf(request.getAccountId())));
-        }
-        return ResponseEntity.status(400).build();
+    public ResponseEntity<String> createTransaction(
+            @RequestBody OnlinePaymentRequest request,
+            HttpServletRequest httpSerReq){
+        Account account = accountService.getAccByCustomer(cstService.getCustomerByEmail(authUserInfo.getEmail(httpSerReq)));
+        Transaction transaction = new Transaction(
+                account.getId(),
+                Double.valueOf(request.getAmount()),
+                Enum.transactionType.OnlinePayment.toString()
+        );
+        if(Objects.equals(request.getDotationType()
+                , String.valueOf(Enum.dotationType.National)))
+            return onlineBillsPayment(account, transaction, 15000.0) ?
+                    ResponseEntity.ok("Online payment done successfully.") :
+                    ResponseEntity.status(400).body("Online payment Failed, Try again.") ;
+        else return onlineBillsPayment(account, transaction, 100000.0) ?
+                ResponseEntity.ok("Online payment done successfully.") :
+                ResponseEntity.status(400).body("Online payment Failed, Try again.") ;
     }
 
-
+    @PostMapping("bill-payment")
+    public ResponseEntity<String> billsPayment(
+            @RequestBody OnlinePaymentRequest req,
+            HttpServletRequest httpSerReq){
+        Account account = accountService.getAccByCustomer(cstService.getCustomerByEmail(authUserInfo.getEmail(httpSerReq)));
+        Transaction transaction = new Transaction(
+                account.getId(),
+                Double.valueOf(req.getAmount()),
+                Enum.transactionType.BillPayment.toString()
+        );
+        // generate pdf file and send it to the client...
+        return onlineBillsPayment(account, transaction, 15000.0) ?
+                ResponseEntity.ok("Your bill has payed Successfully.") :
+                ResponseEntity.status(400).body("Payment failed, try again.");
+    }
 
     public boolean deposit(Account acc, Double amount, String transactionType){
             Long accountId = acc.getId();
@@ -119,22 +141,45 @@ public class TransactionController {
 
     public boolean withdraw(Account acc, Double amount, String transactionType) {
         Transaction transaction = new Transaction(acc.getId(), amount, transactionType);
-        Double totalPerDay = transactionService.getTransactionsPerDay(acc.getId())
-                .stream().filter(trs -> Objects.equals(trs.getType(), Enum.transactionType.Withdrawal.toString()))
-                .mapToDouble(Transaction::getAmount).sum() + amount;
-
-        Double totalPerYear = transactionService.getTransactionsPerYear(acc.getId())
-                .stream().filter(trs -> Objects.equals(trs.getType(), Enum.transactionType.Withdrawal.toString()))
-                .mapToDouble(Transaction::getAmount).sum() + amount;
-
-        if(Objects.equals(acc.getType(), Enum.accType.Standard.toString()) && (totalPerDay > 5000 || totalPerYear > 100000)){
+        double totalPerDay = getTotalPerDay(acc, amount, Enum.transactionType.Withdrawal.toString());
+        double totalPerYear = getTotalPerYear(acc, amount, Enum.transactionType.Withdrawal.toString());
+        if(Objects.equals(acc.getType(), Enum.accType.Standard.toString())
+                && (totalPerDay > 5000 || totalPerYear > 100000)){
             return false;
         }
-        if(Objects.equals(acc.getType(), Enum.accType.Professional.toString()) && (totalPerDay > 10000 || totalPerYear > 200000)){
+        if(Objects.equals(acc.getType(), Enum.accType.Professional.toString())
+                && (totalPerDay > 100000 || totalPerYear > 200000)){
             return false;
         }
         accountService.subtractFromAccountById(amount, acc);
         return transactionService.save(transaction) != null;
+    }
+
+    public boolean onlineBillsPayment(Account acc, Transaction trs, Double plf){
+        double totalPerDay = getTotalPerDay(acc, trs.getAmount(), Enum.transactionType.OnlinePayment.toString())
+                + getTotalPerDay(acc, trs.getAmount(), Enum.transactionType.BillPayment.toString());
+        double totalPerYear = getTotalPerYear(acc, trs.getAmount(), Enum.transactionType.OnlinePayment.toString())
+                + getTotalPerYear(acc, trs.getAmount(), Enum.transactionType.BillPayment.toString());
+        if(Objects.equals(acc.getType(), String.valueOf(Enum.accType.Standard))
+                && (totalPerDay > 5000 || totalPerYear > 100000))
+            return false;
+        if(Objects.equals(acc.getType(), String.valueOf(Enum.accType.Professional))
+                && (totalPerDay > plf || totalPerYear > plf))
+            return false;
+        accountService.subtractFromAccountById(trs.getAmount(), acc);
+        return transactionService.save(trs) != null;
+    }
+
+    public Double getTotalPerDay(Account acc, Double amount, String trsType){
+        return transactionService.getTransactionsPerDay(acc.getId())
+                .stream().filter(trs -> Objects.equals(trs.getType(), trsType))
+                .mapToDouble(Transaction::getAmount).sum() + amount;
+    }
+
+    public Double getTotalPerYear(Account acc, Double amount, String trsType){
+        return transactionService.getTransactionsPerYear(acc.getId())
+                .stream().filter(trs -> Objects.equals(trs.getType(), trsType))
+                .mapToDouble(Transaction::getAmount).sum() + amount;
     }
 
 }
