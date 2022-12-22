@@ -5,16 +5,16 @@ import com.bankconnect.entities.Customer;
 import com.bankconnect.entities.Request;
 import com.bankconnect.helpers.AuthenticatedUserInfo;
 import com.bankconnect.helpers.SendMail;
-import com.bankconnect.helpers.TwilioSMS;
 import com.bankconnect.repositories.RequestRepository;
 import com.bankconnect.services.CustomerService;
-import com.twilio.rest.api.v2010.account.Message;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +26,7 @@ public class CustomerController {
     private final SendMail sendMail;
     private Customer cst;
     private int codeVer;
+    private LocalTime setTime;
 
     @Value("${EMAIL_ADDRESS}")
     private String email;
@@ -47,20 +48,12 @@ public class CustomerController {
                 req.getCinImage(),
                 false
         );
-//        Request reqAccount = new Request();
+
         cst.setPassword(BCrypt.hashpw(cst.getPassword(), BCrypt.gensalt(10)));
         codeVer = generateVerifiedCode();
         System.out.println(codeVer);
-//        sendMail.sendSimpleMessage(customer.getEmail(), "Code verification", "Code: "+codeVer+" .");
+//        sendMail.sendVerificationCode(cst.getEmail(), "Code verification", "Code: "+codeVer+" .");
         return ResponseEntity.ok("Code verification has been sent to you.");
-//        if(cstService.save(customer) != null){
-//            reqAccount.setTypeAccount(req.getAccType());
-//            reqAccount.setCustomerId(customer.getId());
-//            reqRepository.save(reqAccount);
-//            return ResponseEntity.ok("Success registration");
-//        }else{
-//            return ResponseEntity.status(400).body("Failed creation customer");
-//        }
     }
 
     @PostMapping("/code-verification")
@@ -68,14 +61,28 @@ public class CustomerController {
             @RequestBody RegisterRequest req){
         Request reqAccount = new Request();
         if((req.getVerCode() == codeVer) && (cst != null)){
-            if(cstService.save(cst) != null) {
-                reqAccount.setTypeAccount(req.getAccType());
-                reqAccount.setCustomerId(cst.getId());
-                reqRepository.save(reqAccount);
-                return ResponseEntity.ok("Success registration");
+            if(isCodeValid()){
+                System.out.println("Valid code");
+                if(cstService.save(cst) != null) {
+                    reqAccount.setTypeAccount(req.getAccType());
+                    reqAccount.setCustomerId(cst.getId());
+                    reqRepository.save(reqAccount);
+                    cst = null;
+                    return ResponseEntity.ok("Success registration");
+                }
+            }else{
+                ResponseEntity.status(400).body("The code has expired");
             }
+//
         }
         return ResponseEntity.status(400).body("Failed creation customer");
+    }
+
+    @GetMapping("/resend-code")
+    public ResponseEntity<String> resendVerCode(){
+        sendMail.sendVerificationCode(cst.getEmail(), "Code verification", "Code: "+codeVer+" .");
+        setTime = LocalTime.now();
+        return ResponseEntity.ok("The code has been sent to you, check your email.");
     }
 
     @GetMapping("info")
@@ -86,6 +93,13 @@ public class CustomerController {
     }
 
     public int generateVerifiedCode(){
+        setTime = LocalTime.now();
+        System.out.println(setTime);
         return (int)Math.floor(Math.random()*(99999-9999+1)+9999);
+    }
+
+    public boolean isCodeValid(){
+        LocalTime now = LocalTime.now();
+        return now.isBefore(setTime.plusMinutes(3));
     }
 }

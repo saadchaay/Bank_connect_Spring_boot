@@ -35,7 +35,7 @@ public class SecurityConfig {
             http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/**", "/register", "/code-verification")
+                .requestMatchers("/auth/**", "/register", "/code-verification", "/resend-code")
                 .permitAll()
                 .and()
                 .sessionManagement()
