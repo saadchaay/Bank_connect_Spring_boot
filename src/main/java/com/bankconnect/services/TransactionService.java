@@ -49,6 +49,7 @@ public class TransactionService {
     }
 
     public List<Transaction> getTransactionsPerDay(Long accountId){
+        System.out.println("Day: " + calendarCompare.get(Calendar.DAY_OF_MONTH));
         return transactionRepository.getTransactionsPerDay(accountId, calendarCompare.get(Calendar.DAY_OF_MONTH));
     }
 

@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class TransactionRequest {
-    private String accountId;
+public class OnlinePaymentRequest {
+    private String dotationType;
+    private String bill;
     private String amount;
-    private String transactionType;
 }

@@ -17,5 +17,6 @@ public class RegisterRequest {
     private String address;
     private String cinImage;
     private String accType;
+    private int verCode;
 
 }
