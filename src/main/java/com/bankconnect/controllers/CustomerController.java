@@ -4,6 +4,7 @@ import com.bankconnect.dto.RegisterRequest;
 import com.bankconnect.entities.Customer;
 import com.bankconnect.entities.Request;
 import com.bankconnect.helpers.AuthenticatedUserInfo;
+import com.bankconnect.helpers.RandomCode;
 import com.bankconnect.helpers.SendMail;
 import com.bankconnect.repositories.RequestRepository;
 import com.bankconnect.services.CustomerService;
@@ -50,9 +51,10 @@ public class CustomerController {
         );
 
         cst.setPassword(BCrypt.hashpw(cst.getPassword(), BCrypt.gensalt(10)));
-        codeVer = generateVerifiedCode();
+        codeVer = RandomCode.generate();
         System.out.println(codeVer);
-//        sendMail.sendVerificationCode(cst.getEmail(), "Code verification", "Code: "+codeVer+" .");
+        sendMail.sendVerificationCode(cst.getEmail(), "Code verification", "Code: "+codeVer+" .");
+        setTime = LocalTime.now();
         return ResponseEntity.ok("Code verification has been sent to you.");
     }
 
@@ -80,6 +82,7 @@ public class CustomerController {
 
     @GetMapping("/resend-code")
     public ResponseEntity<String> resendVerCode(){
+        codeVer = RandomCode.generate();
         sendMail.sendVerificationCode(cst.getEmail(), "Code verification", "Code: "+codeVer+" .");
         setTime = LocalTime.now();
         return ResponseEntity.ok("The code has been sent to you, check your email.");
@@ -93,8 +96,6 @@ public class CustomerController {
     }
 
     public int generateVerifiedCode(){
-        setTime = LocalTime.now();
-        System.out.println(setTime);
         return (int)Math.floor(Math.random()*(99999-9999+1)+9999);
     }
 
