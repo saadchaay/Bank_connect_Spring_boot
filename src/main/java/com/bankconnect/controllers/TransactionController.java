@@ -3,14 +3,15 @@ package com.bankconnect.controllers;
 import com.bankconnect.dto.*;
 import com.bankconnect.entities.Account;
 import com.bankconnect.entities.Virement;
-import com.bankconnect.helpers.AuthenticatedUserInfo;
-import com.bankconnect.helpers.Enum;
+import com.bankconnect.helpers.*;
 import com.bankconnect.entities.Transaction;
+import com.bankconnect.helpers.Enum;
 import com.bankconnect.services.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,13 +24,15 @@ public class TransactionController {
     private final AccountService accountService;
     private final VirementService virementService;
     private final AuthenticatedUserInfo authUserInfo;
+    private final InvoiceGenerate invoiceGenerate;
 
-    public TransactionController(CustomerService cstService, TransactionService transactionService, AccountService accountService, VirementService virementService, AuthenticatedUserInfo authUserInfo) {
+    public TransactionController(CustomerService cstService, TransactionService transactionService, AccountService accountService, VirementService virementService, AuthenticatedUserInfo authUserInfo, InvoiceGenerate invoiceGenerate) {
         this.cstService = cstService;
         this.transactionService = transactionService;
         this.accountService = accountService;
         this.virementService = virementService;
         this.authUserInfo = authUserInfo;
+        this.invoiceGenerate = invoiceGenerate;
     }
 
     @GetMapping("all")
@@ -121,12 +124,27 @@ public class TransactionController {
             @RequestBody OnlinePaymentRequest req,
             HttpServletRequest httpSerReq){
         Account account = accountService.getAccByCustomer(cstService.getCustomerByEmail(authUserInfo.getEmail(httpSerReq)));
+        System.out.println("customer name: "+account.getCustomer().getName());
         Transaction transaction = new Transaction(
                 account.getId(),
                 Double.valueOf(req.getAmount()),
                 Enum.transactionType.BillPayment.toString()
         );
-        // generate pdf file and send it to the client...
+
+        String billType = req.getBill();
+        String refBill = "";
+        switch (billType){
+            case "Water" -> refBill = "Wtr-"+RandomCode.generate();
+            case "Electricity" -> refBill = "Elect-"+RandomCode.generate();
+            case "Phone" -> refBill = "tel-"+RandomCode.generate();
+        }
+        Facture facture = new Facture(account, RandomCode.generate(), refBill, billType, Double.valueOf(req.getAmount()));
+        System.out.println("facture: "+ facture);
+        try {
+            invoiceGenerate.create(facture);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         return onlineBillsPayment(account, transaction, 15000.0) ?
                 ResponseEntity.ok("Your bill has payed Successfully.") :
                 ResponseEntity.status(400).body("Payment failed, try again.");
