@@ -1,7 +1,9 @@
 package com.bankconnect.controllers;
 
+import com.bankconnect.entities.Customer;
 import com.bankconnect.helpers.JwtUtils;
 import com.bankconnect.dto.AuthenticationRequest;
+import com.bankconnect.helpers.LoggedIn;
 import com.bankconnect.services.AgentService;
 import com.bankconnect.services.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +39,17 @@ public class AuthController {
     }
 
     @PostMapping("customer")
-    public ResponseEntity<String> customerAuthentication(
+    public ResponseEntity<Object> customerAuthentication(
             @RequestBody AuthenticationRequest request
     ){
         setAuthenticationManager(request.getEmail(), request.getPassword());
         final UserDetails userCustomer = customerService.findByEmail(request.getEmail());
         if(userCustomer != null){
-            return ResponseEntity.ok(jwtUtils.generateToken(userCustomer));
+            LoggedIn loggedIn = new LoggedIn();
+            Customer customer = customerService.getCustomerByEmail(request.getEmail());
+            loggedIn.setCustomer(customer);
+            loggedIn.setToken(jwtUtils.generateToken(userCustomer));
+            return ResponseEntity.ok(loggedIn);
         }
         return ResponseEntity.status(400).body("Some error has occurred");
     }
