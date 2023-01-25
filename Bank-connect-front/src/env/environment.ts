@@ -6,5 +6,8 @@ export const environment = {
     loginAgent: "http://localhost:8080/auth/agent",
     verifyEmail: "http://localhost:8080/code-verification",
     transfer: "http://localhost:8080/customer/transfer",
+    deposit: "http://localhost:8080/customer/deposit",
+    withdraw: "http://localhost:8080/customer/withdraw",
+
   }
 };

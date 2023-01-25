@@ -17,6 +17,8 @@ import { RegisterComponent } from './Pages/register/register.component';
 import { RegisterFormComponent } from './Components/register-form/register-form.component';
 import { LoaderComponent } from './Components/loader/loader.component';
 import { AccountDetailsComponent } from './Components/account-details/account-details.component';
+import { DepositComponent } from './Components/deposit/deposit.component';
+import { WithdrawComponent } from './Components/withdraw/withdraw.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,8 @@ import { AccountDetailsComponent } from './Components/account-details/account-de
     RegisterFormComponent,
     LoaderComponent,
     AccountDetailsComponent,
+    DepositComponent,
+    WithdrawComponent,
   ],
   imports: [
     BrowserModule,

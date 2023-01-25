@@ -28,6 +28,16 @@ export class CustomerManagementService {
     //@ts-ignore
     return this.http.post(this.apiUrl.transfer, formData,{headers,responseType: "text"})
   }
+
+  deposit(formData:Object, headers: Object): Observable<String>{
+    //@ts-ignore
+    return this.http.post(this.apiUrl.deposit, formData,{headers,responseType: "text"})
+  }
+
+  withdraw(formData:Object, headers: Object): Observable<String>{
+    //@ts-ignore
+    return this.http.post(this.apiUrl.withdraw, formData,{headers,responseType: "text"})
+  }
   // acceptCustomerAccount()
 
 }
