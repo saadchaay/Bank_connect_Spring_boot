@@ -11,6 +11,9 @@ import { DashboardComponent } from './Pages/dashboard/dashboard.component';
 import { HomeComponent } from './Pages/home/home.component';
 import { RequestsComponent } from './Components/requests/requests.component';
 import { TransferComponent } from './Components/transfer/transfer.component';
+import { RegisterComponent } from './Pages/register/register.component';
+import { RegisterFormComponent } from './Components/register-form/register-form.component';
+import { LoaderComponent } from './Components/loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +23,10 @@ import { TransferComponent } from './Components/transfer/transfer.component';
     DashboardComponent,
     HomeComponent,
     RequestsComponent,
-    TransferComponent
+    TransferComponent,
+    RegisterComponent,
+    RegisterFormComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
