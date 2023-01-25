@@ -11,6 +11,8 @@ import { DashboardComponent } from './Pages/dashboard/dashboard.component';
 import { HomeComponent } from './Pages/home/home.component';
 import { RequestsComponent } from './Components/requests/requests.component';
 import { TransferComponent } from './Components/transfer/transfer.component';
+import { HeaderComponent } from './Components/header/header.component';
+import { CustomerLoginComponent } from './Pages/customer-login/customer-login.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { TransferComponent } from './Components/transfer/transfer.component';
     DashboardComponent,
     HomeComponent,
     RequestsComponent,
-    TransferComponent
+    TransferComponent,
+    HeaderComponent,
+    CustomerLoginComponent
   ],
   imports: [
     BrowserModule,

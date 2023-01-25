@@ -47,6 +47,7 @@ public class AuthController {
         if(userCustomer != null){
             LoggedIn loggedIn = new LoggedIn();
             Customer customer = customerService.getCustomerByEmail(request.getEmail());
+            customer.setPassword(null);
             loggedIn.setCustomer(customer);
             loggedIn.setToken(jwtUtils.generateToken(userCustomer));
             return ResponseEntity.ok(loggedIn);

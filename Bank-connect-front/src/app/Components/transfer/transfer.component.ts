@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
 
@@ -7,16 +7,28 @@ import {Router} from "@angular/router";
   templateUrl: './transfer.component.html',
   styleUrls: ['./transfer.component.css']
 })
-export class TransferComponent {
+export class TransferComponent implements OnInit{
   amount!: number;
   accountNumber!: string;
+
+  accountType!: string;
+  name!: string;
 
   constructor(private http: HttpClient,
               private router: Router) {}
 
+  ngOnInit(): void {
+    // @ts-ignore
+    this.name = JSON.parse(localStorage.getItem('customer')).customer.name;
+    // @ts-ignore
+    this.accountNumber = JSON.parse(localStorage.getItem('customer')).customer.accountNumber;
+
+  }
+
   transfer() {
 
-    const token = localStorage.getItem('token');
+    // @ts-ignore
+    const token = JSON.parse(localStorage.getItem('customer')).token
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });

@@ -15,7 +15,7 @@ export class LoginFormComponent {
               private router: Router) {}
 
   ngOnInit(): void {
-    if(localStorage.getItem("token") != null){
+    if(localStorage.getItem("customer") != null){
       this.router.navigate(["/"]).then();
     }
   }
@@ -33,7 +33,10 @@ export class LoginFormComponent {
         console.log("response")
         // @ts-ignore
         const token = response['token'];
-        localStorage.setItem('token', token);
+        // @ts-ignore
+        const customer = response['customer'];
+        // localStorage.setItem('tokenCst', token);
+        localStorage.setItem('customer', JSON.stringify(response));
         this.router.navigate(['/']).then();
       });
   }
