@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
+import {CustomerManagementService} from "../../core/services/customer-management.service";
 
 @Component({
   selector: 'app-transfer',
@@ -11,11 +12,11 @@ export class TransferComponent implements OnInit{
   amount!: number;
   accountNumber!: string;
 
-  accountType!: string;
-  name!: string;
+
 
   constructor(private http: HttpClient,
-              private router: Router) {}
+              private router: Router,
+              private cstService: CustomerManagementService) {}
 
   ngOnInit(): void {
     // @ts-ignore
@@ -41,10 +42,10 @@ export class TransferComponent implements OnInit{
     console.log(headers)
 
 
-    this.http.post('http://localhost:8080/customer/transfer', formData,{headers: headers, responseType: "text"})
+      this.cstService.transfer(formData,headers)
       .subscribe(response => {
         console.log(response)
-        this.router.navigate(['/test']).then();
+        this.router.navigate(['/']).then();
       });
 }
 }

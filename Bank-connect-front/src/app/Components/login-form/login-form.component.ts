@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
+import {environment} from "../../../env/environment";
+import {CustomerManagementService} from "../../core/services/customer-management.service";
 
 @Component({
   selector: 'app-login-form',
@@ -10,9 +12,12 @@ import {Router} from "@angular/router";
 export class LoginFormComponent {
   email!: string;
   password!: string;
+  apiUrl = environment.apiUrl;
+
 
   constructor(private http: HttpClient,
-              private router: Router) {}
+              private router: Router,
+              private cstService: CustomerManagementService) {}
 
   ngOnInit(): void {
     if(localStorage.getItem("customer") != null){
@@ -28,11 +33,8 @@ export class LoginFormComponent {
     console.log(formData)
 
 
-    this.http.post('http://localhost:8080/auth/customer', formData)
+    this.cstService.loginCustomer(formData)
       .subscribe(response => {
-        console.log("response")
-        // @ts-ignore
-        const token = response['token'];
         // @ts-ignore
         const customer = response['customer'];
         // localStorage.setItem('tokenCst', token);

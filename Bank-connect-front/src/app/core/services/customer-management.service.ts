@@ -19,6 +19,15 @@ export class CustomerManagementService {
   verifyCustomer(codeVer: number, accType: String): Observable<String> {
     return this.http.post(this.apiUrl.verifyEmail, {verCode: codeVer,accType: accType}, {responseType: "text"})
   }
+
+  loginCustomer(formData:Object): Observable<Object>{
+    return this.http.post(this.apiUrl.loginCustomer, formData)
+  }
+
+  transfer(formData:Object, headers: Object): Observable<String>{
+    //@ts-ignore
+    return this.http.post(this.apiUrl.transfer, formData,{headers,responseType: "text"})
+  }
   // acceptCustomerAccount()
 
 }

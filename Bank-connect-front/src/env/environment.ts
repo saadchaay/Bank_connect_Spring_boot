@@ -5,5 +5,6 @@ export const environment = {
     registerCustomer: "http://localhost:8080/register",
     loginAgent: "http://localhost:8080/auth/agent",
     verifyEmail: "http://localhost:8080/code-verification",
+    transfer: "http://localhost:8080/customer/transfer",
   }
 };

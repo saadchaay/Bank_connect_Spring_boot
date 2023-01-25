@@ -16,6 +16,7 @@ import { CustomerLoginComponent } from './Pages/customer-login/customer-login.co
 import { RegisterComponent } from './Pages/register/register.component';
 import { RegisterFormComponent } from './Components/register-form/register-form.component';
 import { LoaderComponent } from './Components/loader/loader.component';
+import { AccountDetailsComponent } from './Components/account-details/account-details.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { LoaderComponent } from './Components/loader/loader.component';
     RegisterComponent,
     RegisterFormComponent,
     LoaderComponent,
+    AccountDetailsComponent,
   ],
   imports: [
     BrowserModule,
