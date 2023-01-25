@@ -95,10 +95,6 @@ public class CustomerController {
         return ResponseEntity.ok(cstService.getCustomerByEmail(email));
     }
 
-    public int generateVerifiedCode(){
-        return (int)Math.floor(Math.random()*(99999-9999+1)+9999);
-    }
-
     public boolean isCodeValid(){
         LocalTime now = LocalTime.now();
         return now.isBefore(setTime.plusMinutes(3));
