@@ -5,14 +5,20 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
+@Component
 public class InvoiceGenerate {
 
-    public static void create() throws IOException {
+    public void create(Facture facture) throws IOException {
+        System.out.println("inside facture");
         PDDocument document = new PDDocument();
         PDPage page = new PDPage();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         document.addPage(page);
 
         // Create a font
@@ -31,25 +37,25 @@ public class InvoiceGenerate {
         // Add the invoice number and date
         contentStream.beginText();
         contentStream.newLineAtOffset(50, 750);
-        contentStream.showText("Invoice Number: 123456");
+        contentStream.showText("Invoice Number: "+facture.getRefBill());
         contentStream.newLineAtOffset(0, -25);
-        contentStream.showText("Invoice Date: 01/01/2022");
+        contentStream.showText("Invoice Date: "+ formatter.format(LocalDate.now()));
         contentStream.endText();
 
         // Add the customer information
         contentStream.beginText();
         contentStream.newLineAtOffset(350, 750);
-        contentStream.showText("Customer Name: John Doe");
+        contentStream.showText("Customer Name: "+facture.getAccount().getCustomer().getName());
         contentStream.endText();
 
         contentStream.beginText();
         contentStream.newLineAtOffset(350, 725);
-        contentStream.showText("Customer Address: 123 Main Street");
+        contentStream.showText("Customer Address: "+facture.getAccount().getCustomer().getAddress());
         contentStream.endText();
 
         contentStream.beginText();
         contentStream.newLineAtOffset(350, 700);
-        contentStream.showText("Customer Phone: 555-555-5555");
+        contentStream.showText("Customer Phone: "+facture.getAccount().getCustomer().getPhone());
         contentStream.endText();
 
         // Add the invoice items
@@ -69,13 +75,13 @@ public class InvoiceGenerate {
         // Add the first invoice item
         contentStream.beginText();
         contentStream.newLineAtOffset(50, 625);
-        contentStream.showText("Product A");
+        contentStream.showText("Product: "+facture.getType());
 //        contentStream.newLineAtOffset(150, 0);
 //        contentStream.showText("2");
         contentStream.newLineAtOffset(125, 0);
-        contentStream.showText("$50.00");
+        contentStream.showText("DH "+facture.getAmount());
         contentStream.newLineAtOffset(175, 0);
-        contentStream.showText("$100.00");
+        contentStream.showText("DH "+facture.getAmount());
         contentStream.endText();
 
 

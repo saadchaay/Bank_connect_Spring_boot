@@ -82,20 +82,20 @@ public class Account {
         this.customerId = customerId;
     }
 
+    public Double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Double amount) {
+        this.balance = amount;
+    }
+
     public Customer getCustomer() {
         return customer;
     }
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
-    }
-
-    public Double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(Double balance) {
-        this.balance = balance;
     }
 
     public Date getCreated() {

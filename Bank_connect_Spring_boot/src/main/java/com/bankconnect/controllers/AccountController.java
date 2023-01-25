@@ -48,7 +48,6 @@ public class AccountController {
                 .collect(Collectors.toList()));
     }
 
-
     public void createAccount(Customer customer){
         Account account = new Account();
         account.setBalance(0.0);

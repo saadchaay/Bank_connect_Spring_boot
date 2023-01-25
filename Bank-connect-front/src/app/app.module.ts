@@ -13,6 +13,9 @@ import { RequestsComponent } from './Components/requests/requests.component';
 import { TransferComponent } from './Components/transfer/transfer.component';
 import { HeaderComponent } from './Components/header/header.component';
 import { CustomerLoginComponent } from './Pages/customer-login/customer-login.component';
+import { RegisterComponent } from './Pages/register/register.component';
+import { RegisterFormComponent } from './Components/register-form/register-form.component';
+import { LoaderComponent } from './Components/loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +27,10 @@ import { CustomerLoginComponent } from './Pages/customer-login/customer-login.co
     RequestsComponent,
     TransferComponent,
     HeaderComponent,
-    CustomerLoginComponent
+    CustomerLoginComponent,
+    RegisterComponent,
+    RegisterFormComponent,
+    LoaderComponent,
   ],
   imports: [
     BrowserModule,
