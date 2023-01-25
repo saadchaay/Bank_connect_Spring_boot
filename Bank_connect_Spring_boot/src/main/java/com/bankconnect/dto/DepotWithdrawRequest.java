@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class DepotWithdrawRequest {
-    private Long accountNumber;
+    private String accountNumber;
     private double amount;
 
 }

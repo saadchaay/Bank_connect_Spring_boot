@@ -10,6 +10,7 @@ import { DashboardComponent } from "./Pages/dashboard/dashboard.component";
 const routes: Routes = [
   { path: '', component: HomeComponent},
   { path: 'login', component: AgentLoginComponent },
+  { path: 'test' , component: LoginFormComponent},
 ];
 
 @NgModule({

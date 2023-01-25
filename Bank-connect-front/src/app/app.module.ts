@@ -10,6 +10,7 @@ import { AgentLoginComponent } from './Pages/agent-login/agent-login.component';
 import { DashboardComponent } from './Pages/dashboard/dashboard.component';
 import { HomeComponent } from './Pages/home/home.component';
 import { RequestsComponent } from './Components/requests/requests.component';
+import { TransferComponent } from './Components/transfer/transfer.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { RequestsComponent } from './Components/requests/requests.component';
     AgentLoginComponent,
     DashboardComponent,
     HomeComponent,
-    RequestsComponent
+    RequestsComponent,
+    TransferComponent
   ],
   imports: [
     BrowserModule,

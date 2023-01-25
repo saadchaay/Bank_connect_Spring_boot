@@ -44,6 +44,7 @@ public class CustomerService {
 
     public Customer getCustomerByEmail(String email){
         Optional customer = customerRepository.findByEmail(email);
+        System.out.println("getbyemail123");
         return customer.isPresent() ? (Customer) customer.get() : null;
     }
 

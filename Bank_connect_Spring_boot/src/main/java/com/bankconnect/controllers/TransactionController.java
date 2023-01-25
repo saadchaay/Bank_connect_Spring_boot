@@ -40,7 +40,7 @@ public class TransactionController {
     @PostMapping("deposit")
     public ResponseEntity<String> deposit(
             @RequestBody DepotWithdrawRequest req){
-        Account account = accountService.getAccountByNumber(req.getAccountNumber());
+        Account account = accountService.getAccountByNumber(Long.valueOf(req.getAccountNumber()));
         Double amount = req.getAmount();
         if(account != null) {
             return deposit(account, amount, String.valueOf(Enum.transactionType.Deposit)) ?
@@ -68,9 +68,14 @@ public class TransactionController {
     public ResponseEntity<String> transfer(
             @RequestBody DepotWithdrawRequest req,
             HttpServletRequest httpSerReq) {
+        System.out.println("test");
+
         Account account = accountService.getAccByCustomer(cstService.getCustomerByEmail(authUserInfo.getEmail(httpSerReq)));
-        Account recipientAccount = accountService.getAccountByNumber(req.getAccountNumber());
+        System.out.println("account "+ account);
+        System.out.println(req.getAccountNumber());
+        Account recipientAccount = accountService.getAccountByNumber(Long.valueOf(req.getAccountNumber()));
         double amount = req.getAmount();
+        System.out.println("test1");
 
         if (recipientAccount != null && amount <= account.getBalance()) {
             Transaction transaction = new Transaction(
@@ -79,20 +84,23 @@ public class TransactionController {
             );
             accountService.subtractFromAccountById(amount, account);
             accountService.addToAccountById(amount, recipientAccount.getId());
+            System.out.println("test2");
 
             if (transactionService.save(transaction) != null) {
                 Virement virement = new Virement(
                         recipientAccount.getId(),
                         false,
                         transaction.getId());
+                System.out.println("test3");
+
 
                     return virementService.save(virement) != null ?
                             ResponseEntity.ok("Transfer done successfully"):
-                            ResponseEntity.status(400).body("Transfer failed");
+                            ResponseEntity.status(400).body("Transfer failed1");
             } else
-                return ResponseEntity.status(400).body("Transfer failed");
+                return ResponseEntity.status(400).body("Transfer failed2");
         }else{
-            return ResponseEntity.status(400).body("Transfer failed");
+            return ResponseEntity.status(400).body("Transfer failed3");
         }
     }
 

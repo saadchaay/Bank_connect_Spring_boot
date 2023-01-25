@@ -34,7 +34,7 @@ export class LoginFormComponent {
         // @ts-ignore
         const token = response['token'];
         localStorage.setItem('token', token);
-        this.router.navigate(['/']);
+        this.router.navigate(['/']).then();
       });
   }
 
