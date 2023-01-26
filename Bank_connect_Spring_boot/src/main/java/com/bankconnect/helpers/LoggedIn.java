@@ -10,5 +10,4 @@ import lombok.Setter;
 public class LoggedIn {
     private Customer customer;
     private String Token;
-
 }

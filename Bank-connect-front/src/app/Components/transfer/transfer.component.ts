@@ -1,22 +1,35 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
+import {CustomerManagementService} from "../../core/services/customer-management.service";
 
 @Component({
   selector: 'app-transfer',
   templateUrl: './transfer.component.html',
   styleUrls: ['./transfer.component.css']
 })
-export class TransferComponent {
+export class TransferComponent implements OnInit{
   amount!: number;
   accountNumber!: string;
 
+
+
   constructor(private http: HttpClient,
-              private router: Router) {}
+              private router: Router,
+              private cstService: CustomerManagementService) {}
+
+  ngOnInit(): void {
+    // @ts-ignore
+    this.name = JSON.parse(localStorage.getItem('customer')).customer.name;
+    // @ts-ignore
+    this.accountNumber = JSON.parse(localStorage.getItem('customer')).customer.accountNumber;
+
+  }
 
   transfer() {
 
-    const token = localStorage.getItem('token');
+    // @ts-ignore
+    const token = JSON.parse(localStorage.getItem('customer')).token
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -29,10 +42,10 @@ export class TransferComponent {
     console.log(headers)
 
 
-    this.http.post('http://localhost:8080/customer/transfer', formData,{headers: headers, responseType: "text"})
+      this.cstService.transfer(formData,headers)
       .subscribe(response => {
         console.log(response)
-        this.router.navigate(['/test']).then();
+        this.router.navigate(['/']).then();
       });
 }
 }

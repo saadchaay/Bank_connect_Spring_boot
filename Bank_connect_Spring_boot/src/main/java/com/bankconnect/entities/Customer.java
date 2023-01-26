@@ -1,6 +1,9 @@
 package com.bankconnect.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class Customer {
@@ -40,6 +43,14 @@ public class Customer {
     @Basic
     @Column(name = "status", nullable = false)
     private boolean status;
+
+    @JsonIgnore
+    @OneToMany(mappedBy="customer", cascade = CascadeType.REMOVE)
+    private List<Account> accounts;
+
+    @JsonIgnore
+    @OneToMany(mappedBy="customer", cascade = CascadeType.REMOVE)
+    private List<Request> requests;
 
     public Customer() {}
 
@@ -124,5 +135,21 @@ public class Customer {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
+    }
+
+    public List<Request> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<Request> requests) {
+        this.requests = requests;
     }
 }

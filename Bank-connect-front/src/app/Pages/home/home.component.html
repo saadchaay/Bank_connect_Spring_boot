@@ -3,33 +3,30 @@
 <!-- component -->
 <div class="flex h-screen bg-green-300">
   <div class="flex-1 flex flex-col overflow-hidden">
-    <header class="flex justify-between items-center bg-blue-300 p-4">
-      <div class="flex">Left</div>
-      <div class="flex">Right</div>
-    </header>
+    <app-header></app-header>
     <div class="flex h-full">
       <nav class="flex w-72 h-full bg-amber-50">
         <div class="w-full flex mx-auto p-4 ">
 
           <aside class="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" style="height: 90.5vh">
-            <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
+            <a  routerLink="/" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
               <span class="text-2xl"><i class="bx bx-home"></i></span>
               <span>Dashboard</span>
             </a>
 
-            <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
+            <a  routerLink="/transfer" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
               <span class="text-2xl"><i class="bx bx-cart"></i></span>
               <span>Transfer</span>
             </a>
 
-            <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
+            <a  routerLink="/deposit" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
               <span class="text-2xl"><i class="bx bx-shopping-bag"></i></span>
-              <span>Shopping</span>
+              <span>Deposit</span>
             </a>
 
-            <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
+            <a  routerLink="/withdraw" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
               <span class="text-2xl"><i class="bx bx-heart"></i></span>
-              <span>My Favourite</span>
+              <span>Withdraw</span>
             </a>
 
             <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
@@ -45,7 +42,9 @@
           <div class="flex flex-col w-full h-full text-gray-900 text-xl border-4 border-gray-900 border-dashed">
 
             <!-- This is an example component -->
-            <app-transfer></app-transfer>
+            <app-transfer *ngIf="false"></app-transfer>
+            <app-deposit *ngIf="false"></app-deposit>
+            <router-outlet></router-outlet>
 
 <!--            <div class="flex w-full max-w-xl h-60 items-center justify-center mx-auto bg-green-400 border-b border-gray-600">Post</div>-->
 <!--            <div class="flex w-full max-w-xl h-60 items-center justify-center mx-auto bg-green-400 border-b border-gray-600">Post</div>-->

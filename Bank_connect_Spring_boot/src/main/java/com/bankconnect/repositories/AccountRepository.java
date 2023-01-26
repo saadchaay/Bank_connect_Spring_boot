@@ -17,4 +17,5 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     Account getAccountByNumber(Long accountNum);
 
     Account getAccountByCustomer(Customer customer);
+    Account getAccountByCustomerEmail(String Email);
 }

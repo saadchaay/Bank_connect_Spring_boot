@@ -1,6 +1,7 @@
 package com.bankconnect.services;
 
 import com.bankconnect.entities.Agent;
+import com.bankconnect.entities.Customer;
 import com.bankconnect.helpers.Enum;
 import com.bankconnect.repositories.AgentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,11 @@ public class AgentService {
 
     public List<Agent> listAll(){
         return agentRepository.findAll();
+    }
+
+    public Agent getAgentByEmail(String email){
+        Optional agent = agentRepository.findByEmail(email);
+        return agent.isPresent() ? (Agent) agent.get() : null;
     }
 
     public UserDetails findByEmail(String email){
