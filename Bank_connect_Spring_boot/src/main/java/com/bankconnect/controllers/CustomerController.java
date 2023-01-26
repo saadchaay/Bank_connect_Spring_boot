@@ -1,12 +1,16 @@
 package com.bankconnect.controllers;
 
+import com.bankconnect.dto.DepotWithdrawRequest;
 import com.bankconnect.dto.RegisterRequest;
+import com.bankconnect.entities.Account;
 import com.bankconnect.entities.Customer;
 import com.bankconnect.entities.Request;
 import com.bankconnect.helpers.AuthenticatedUserInfo;
 import com.bankconnect.helpers.RandomCode;
 import com.bankconnect.helpers.SendMail;
+import com.bankconnect.repositories.AccountRepository;
 import com.bankconnect.repositories.RequestRepository;
+import com.bankconnect.services.AccountService;
 import com.bankconnect.services.CustomerService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +29,7 @@ public class CustomerController {
     private final CustomerService cstService;
     private final RequestRepository reqRepository;
     private final AuthenticatedUserInfo authUserInfo;
+    private final AccountService accService;
     private final SendMail sendMail;
     private Customer cst;
     private int codeVer;
@@ -94,6 +100,13 @@ public class CustomerController {
         System.out.println(email);
         return ResponseEntity.ok(cstService.getCustomerByEmail(email));
     }
+
+    @GetMapping("customer/account")
+    public ResponseEntity<Account> getAccountByEmail(HttpServletRequest httpSerReq){
+        String email = authUserInfo.getEmail(httpSerReq);
+        return ResponseEntity.ok(accService.getAccByEmail(email));
+    }
+
 
     public boolean isCodeValid(){
         LocalTime now = LocalTime.now();

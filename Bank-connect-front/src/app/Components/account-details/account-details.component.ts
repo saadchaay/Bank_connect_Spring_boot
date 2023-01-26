@@ -16,4 +16,7 @@ export class AccountDetailsComponent implements OnInit{
     this.accountNumber = JSON.parse(localStorage.getItem('customer')).customer.accountNumber;
 
   }
+  getAccount(){
+
+  }
 }

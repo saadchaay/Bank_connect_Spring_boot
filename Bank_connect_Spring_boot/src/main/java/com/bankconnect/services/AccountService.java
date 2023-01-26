@@ -53,9 +53,11 @@ public class AccountService {
     }
 
     public Account getAccByCustomer(Customer customer){
-        System.out.println("getbycustomer");
-        System.out.println("hahua"+accountRepository.getAccountByCustomer(customer));
         return accountRepository.getAccountByCustomer(customer);
+    }
+
+    public Account getAccByEmail(String email){
+        return accountRepository.getAccountByCustomerEmail(email);
     }
 
 }
