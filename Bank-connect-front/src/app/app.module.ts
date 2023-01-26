@@ -19,6 +19,7 @@ import { LoaderComponent } from './Components/loader/loader.component';
 import { AccountDetailsComponent } from './Components/account-details/account-details.component';
 import { DepositComponent } from './Components/deposit/deposit.component';
 import { WithdrawComponent } from './Components/withdraw/withdraw.component';
+import { AgentAuthComponent } from './Pages/agent-auth/agent-auth.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { WithdrawComponent } from './Components/withdraw/withdraw.component';
     AccountDetailsComponent,
     DepositComponent,
     WithdrawComponent,
+    AgentAuthComponent,
   ],
   imports: [
     BrowserModule,

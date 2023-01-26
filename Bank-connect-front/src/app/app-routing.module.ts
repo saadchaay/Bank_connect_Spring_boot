@@ -9,6 +9,8 @@ import {RegisterComponent} from "./Pages/register/register.component";
 import {TransferComponent} from "./Components/transfer/transfer.component";
 import {DepositComponent} from "./Components/deposit/deposit.component";
 import {WithdrawComponent} from "./Components/withdraw/withdraw.component";
+import {DashboardComponent} from "./Pages/dashboard/dashboard.component";
+import {AgentAuthComponent} from "./Pages/agent-auth/agent-auth.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent, children:[
@@ -19,6 +21,8 @@ const routes: Routes = [
   { path: 'login', component: CustomerLoginComponent },
   { path: 'test' , component: LoginFormComponent},
   { path: 'register' , component: RegisterComponent},
+  { path: 'auth-agent' , component: AgentAuthComponent},
+  { path: 'agent/dashboard' , component: DashboardComponent},
 ];
 
 @NgModule({

@@ -8,6 +8,10 @@ export const environment = {
     transfer: "http://localhost:8080/customer/transfer",
     deposit: "http://localhost:8080/customer/deposit",
     withdraw: "http://localhost:8080/customer/withdraw",
-
+    requestsAccount: "http://localhost:8080/agent/requests-all",
+    pendingReqAccount: "http://localhost:8080/agent/requests",
+    activateAccount: "http://localhost:8080/agent/activate/",
+    disableAccount: "http://localhost:8080/agent/disable/",
+    deleteAccount: "http://localhost:8080/agent/delete/",
   }
 };
