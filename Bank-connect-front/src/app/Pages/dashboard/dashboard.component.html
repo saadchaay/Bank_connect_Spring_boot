@@ -1,1 +1,126 @@
-<p>dashboard works!</p>
+<section class="bg-white">
+  <div class="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+    <div class="flex justify-end">
+      <button title="Logout" (click)="logout()">
+        <svg class="w-9 h-9 hover:text-blue-600 rounded-full hover:bg-gray-100 p-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+        </svg>
+      </button>
+    </div>
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">
+        Agent Dashboard
+      </h2>
+    </div>
+
+    <div class="mt-8 sm:mt-12">
+      <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+<!--        <app-card [title]="'Total Offers'" [value]="countOffers[0]"></app-card>-->
+<!--        <app-card [title]="'Pending offers'" [value]="countOffers[1]"></app-card>-->
+<!--        <app-card [title]="'Offers Accepted'" [value]="countOffers[2]" [styleClr]="'text-green-600'"></app-card>-->
+      </dl>
+    </div>
+
+    <section class="antialiased text-gray-600 px-4 mt-8" x-data="app">
+      <div class="flex flex-col justify-start h-full">
+        <!-- Table -->
+        <div class="w-full mx-auto bg-white shadow-lg rounded-sm border border-gray-200">
+          <header class="px-5 py-4 border-b border-gray-100">
+            <div class="font-semibold text-gray-800">Manage Request Account</div>
+          </header>
+
+          <div class="overflow-x-auto p-3">
+            <table class="table-auto w-full">
+              <thead class="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
+              <tr>
+                <th></th>
+                <th class="p-2">
+                  <div class="font-semibold text-left">Customer Name</div>
+                </th>
+                <th class="p-2">
+                  <div class="font-semibold text-left">Email</div>
+                </th>
+                <th class="p-2">
+                  <div class="font-semibold text-left">Phone</div>
+                </th>
+                <th class="p-2">
+                  <div class="font-semibold text-center">Account Type</div>
+                </th>
+                <th class="p-2">
+                  <div class="font-semibold text-center">Status</div>
+                </th>
+                <th class="p-2">
+                  <div class="font-semibold text-center">Action</div>
+                </th>
+              </tr>
+              </thead>
+
+              <tbody class="text-sm divide-y divide-gray-100">
+
+              <!-- records -->
+              <tr *ngFor="let item of requests">
+                <td class="p-2">
+                  <input type="checkbox" class="w-5 h-5" value="id-2"/>
+                </td>
+                <td class="p-2">
+                  <div>
+                    <div class="font-medium text-gray-800">{{item.customer.name}}</div>
+                  </div>
+                </td>
+                <td class="p-2">
+                  <div class="text-left">{{item.customer.email}}</div>
+                </td>
+                <td class="p-2">
+                  <div class="text-left">{{item.customer.phone}}</div>
+                </td>
+                <td class="p-2">
+                  <div [ngClass]="'text-blue-600 bg-blue-200'" class="w-2/3 mx-auto rounded-md text-center text-sm font-medium py-1">
+                    <span> {{item.typeAccount}} </span>
+                  </div>
+                </td>
+                <td class="p-2">
+                  <div [ngClass]="item.customer.status ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'" class="w-3/4 mx-auto rounded-2xl text-center text-xsm font-medium px-1 py-2">
+                    <span *ngIf="item.customer.status"> Active </span>
+                    <span *ngIf="!item.customer.status"> Disabled </span>
+                  </div>
+                </td>
+                <td class="p-2">
+                  <div class="flex justify-center">
+                    <button (click)="deleteCustomer(item.customer.id)">
+                      <svg class="w-8 h-8 hover:text-blue-600 rounded-full hover:bg-gray-100 p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                        </path>
+                      </svg>
+                    </button>
+                    <button *ngIf="!item.customer.status" title="Activate account" (click)="activateCustomer(item.customer.id)">
+                      <svg class="w-8 h-8 hover:text-green-600 rounded-full hover:bg-gray-100 p-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                    <button *ngIf="item.customer.status" title="Disable account" (click)="disabledAccount(item.customer.id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 hover:text-red-600 rounded-full hover:bg-gray-100 p-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                        <path d="M5.7 5.7l12.6 12.6"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- total amount -->
+          <div class="flex justify-end font-bold space-x-4 text-2xl border-t border-gray-100 px-5 py-4">
+            <div>Bank<span class="text-blue-600">Connect</span></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+</section>

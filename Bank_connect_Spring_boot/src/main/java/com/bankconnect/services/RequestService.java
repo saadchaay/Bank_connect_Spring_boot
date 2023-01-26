@@ -20,4 +20,9 @@ public class RequestService {
     public Request getRequestByCustomerId(Long id){
         return requestRepository.findByCustomerId(id);
     }
+
+//    public void deleteRequestsByCustomer(Long id){
+//        requestRepository.deleteAllById(id);
+//    }
+
 }

@@ -27,17 +27,44 @@ public class AccountController {
         return ResponseEntity.ok(accService.getAllAccounts());
     }
 
-    @GetMapping("activate/{accountId}")
-    public ResponseEntity<String> activateAccount(@PathVariable String accountId){
-        Customer customer = cstService.getCustomerById(Long.valueOf(accountId));
+    @GetMapping("activate/{customerId}")
+    public ResponseEntity<String> activateAccount(@PathVariable String customerId){
+        Customer customer = cstService.getCustomerById(Long.valueOf(customerId));
         if(customer != null){
             if(!customer.getStatus()){
-                cstService.activateAccount(Long.valueOf(accountId));
+                cstService.activateAccount(Long.valueOf(customerId));
                 createAccount(customer);
                 return ResponseEntity.ok("Activation an account has been successfully.");
             }
         }
         return ResponseEntity.status(400).body("Failed to activate this account, try again!");
+    }
+
+    @GetMapping("disable/{id}")
+    public ResponseEntity<String> disableAccount(@PathVariable String id){
+        Customer customer = cstService.getCustomerById(Long.valueOf(id));
+        if(customer != null){
+            if(customer.getStatus()){
+                cstService.disableAccount(Long.valueOf(id));
+                return ResponseEntity.ok("Disabled an account has been successfully.");
+            }
+        }
+        return ResponseEntity.status(400).body("Failed to activate this account, try again!");
+    }
+
+    @GetMapping("delete/{id}")
+    public ResponseEntity<String> deleteCustomer(@PathVariable String id){
+        Customer customer = cstService.getCustomerById(Long.valueOf(id));
+        if(customer != null){
+            cstService.deleteCustomerById(Long.valueOf(id));
+            return ResponseEntity.ok("Delete an account has been successfully.");
+        }
+        return ResponseEntity.status(400).body("Failed to activate this account, try again!");
+    }
+
+    @GetMapping("requests-all")
+    public ResponseEntity<List> getAllRequestAccount(){
+        return ResponseEntity.ok(reqService.listAll());
     }
 
     @GetMapping("requests")
@@ -55,7 +82,6 @@ public class AccountController {
         account.setNumber(Long.parseLong(generateRIB()));
         String accType = reqService.getRequestByCustomerId(customer.getId()).getTypeAccount();
         account.setType(accType);
-
         accService.save(account);
     }
 

@@ -44,7 +44,6 @@ public class CustomerService {
 
     public Customer getCustomerByEmail(String email){
         Optional customer = customerRepository.findByEmail(email);
-        System.out.println("getbyemail123");
         return customer.isPresent() ? (Customer) customer.get() : null;
     }
 
@@ -53,20 +52,12 @@ public class CustomerService {
             customerRepository.deleteById(id);
     }
 
-    public void confirmCustomerById(Long id){
-        if(getCustomerById(id) != null){
-            getCustomerById(id).setStatus(true);
-        }
+    public void activateAccount(Long id){
+        customerRepository.changeCustomerStatus(true, id);
     }
 
-//    public void rejectCustomerById(Long id){
-//        if(getCustomerById(id) != null){
-//            getCustomerById(id).setStatus(String.valueOf(Enum.statusVal.Rejected));
-//        }
-//    }
-
-    public void activateAccount(Long id){
-        customerRepository.activateAccount(true, id);
+    public void disableAccount(Long id){
+        customerRepository.changeCustomerStatus(false, id);
     }
 
     public UserDetails findByEmail(String email) {

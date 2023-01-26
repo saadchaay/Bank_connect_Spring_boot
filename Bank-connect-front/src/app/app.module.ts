@@ -14,6 +14,7 @@ import { TransferComponent } from './Components/transfer/transfer.component';
 import { RegisterComponent } from './Pages/register/register.component';
 import { RegisterFormComponent } from './Components/register-form/register-form.component';
 import { LoaderComponent } from './Components/loader/loader.component';
+import { AgentAuthComponent } from './Pages/agent-auth/agent-auth.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { LoaderComponent } from './Components/loader/loader.component';
     TransferComponent,
     RegisterComponent,
     RegisterFormComponent,
-    LoaderComponent
+    LoaderComponent,
+    AgentAuthComponent,
   ],
   imports: [
     BrowserModule,

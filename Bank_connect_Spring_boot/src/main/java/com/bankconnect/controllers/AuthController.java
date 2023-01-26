@@ -1,6 +1,8 @@
 package com.bankconnect.controllers;
 
+import com.bankconnect.entities.Agent;
 import com.bankconnect.entities.Customer;
+import com.bankconnect.helpers.AgentLoggedIn;
 import com.bankconnect.helpers.JwtUtils;
 import com.bankconnect.dto.AuthenticationRequest;
 import com.bankconnect.helpers.LoggedIn;
@@ -27,13 +29,17 @@ public class AuthController {
     private final JwtUtils jwtUtils;
 
     @PostMapping("agent")
-    public ResponseEntity<String> agentAuthentication(
+    public ResponseEntity<Object> agentAuthentication(
             @RequestBody AuthenticationRequest request
     ){
         setAuthenticationManager(request.getEmail(), request.getPassword());
         final UserDetails user = agentService.findByEmail(request.getEmail());
         if(user != null){
-            return ResponseEntity.ok(jwtUtils.generateToken(user));
+            AgentLoggedIn loggedIn = new AgentLoggedIn();
+            Agent agent = agentService.getAgentByEmail(user.getUsername());
+            loggedIn.setAgent(agent);
+            loggedIn.setToken(jwtUtils.generateToken(user));
+            return ResponseEntity.ok(loggedIn);
         }
         return ResponseEntity.status(400).body("Some error has occurred");
     }
