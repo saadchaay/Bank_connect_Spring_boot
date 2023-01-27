@@ -3,6 +3,7 @@ import {Observable} from "rxjs";
 import {Request} from "../models/request";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../../env/environment";
+import {Account} from "../models/account";
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,25 @@ export class AccountService {
   deleteAccount(token: String, id: number): Observable<String>{
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.get(this.apiUrl.deleteAccount+''+id, {headers, responseType: "text"});
+  }
+
+  transfer(formData:Object, headers: Object): Observable<String>{
+    //@ts-ignore
+    return this.http.post(this.apiUrl.transfer, formData,{headers,responseType: "text"})
+  }
+
+  deposit(formData:Object, headers: Object): Observable<String>{
+    //@ts-ignore
+    return this.http.post(this.apiUrl.deposit, formData,{headers,responseType: "text"})
+  }
+
+  withdraw(formData:Object, headers: Object): Observable<String>{
+    //@ts-ignore
+    return this.http.post(this.apiUrl.withdraw, formData,{headers,responseType: "text"})
+  }
+  getAccount(headers: Object): Observable<Account>{
+    //@ts-ignore
+    return this.http.get<Account>(this.apiUrl.getAccount,{headers})
   }
 
 }

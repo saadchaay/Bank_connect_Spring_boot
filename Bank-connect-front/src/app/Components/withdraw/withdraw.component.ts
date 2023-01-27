@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {CustomerManagementService} from "../../core/services/customer-management.service";
+import {AccountService} from "../../core/services/account.service";
 
 @Component({
   selector: 'app-withdraw',
@@ -13,7 +14,7 @@ export class WithdrawComponent {
 
   constructor(private http: HttpClient,
               private router: Router,
-              private cstService: CustomerManagementService) {}
+              private accService: AccountService) {}
 
   withdraw(){
     // @ts-ignore
@@ -28,7 +29,7 @@ export class WithdrawComponent {
     console.log(formData)
 
 
-    this.cstService.withdraw(formData,headers)
+    this.accService.withdraw(formData,headers)
       .subscribe(response => {
         console.log(response)
         this.router.navigate(['/']).then();

@@ -13,5 +13,6 @@ export const environment = {
     activateAccount: "http://localhost:8080/agent/activate/",
     disableAccount: "http://localhost:8080/agent/disable/",
     deleteAccount: "http://localhost:8080/agent/delete/",
+    getAccount: "http://localhost:8080/customer/account",
   }
 };

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {CustomerManagementService} from "../../core/services/customer-management.service";
+import {AccountService} from "../../core/services/account.service";
 
 @Component({
   selector: 'app-transfer',
@@ -16,7 +17,7 @@ export class TransferComponent implements OnInit{
 
   constructor(private http: HttpClient,
               private router: Router,
-              private cstService: CustomerManagementService) {}
+              private accService: AccountService) {}
 
   ngOnInit(): void {
     // @ts-ignore
@@ -42,7 +43,7 @@ export class TransferComponent implements OnInit{
     console.log(headers)
 
 
-      this.cstService.transfer(formData,headers)
+      this.accService.transfer(formData,headers)
       .subscribe(response => {
         console.log(response)
         this.router.navigate(['/']).then();
