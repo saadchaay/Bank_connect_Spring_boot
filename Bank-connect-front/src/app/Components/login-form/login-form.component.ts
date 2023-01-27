@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
-import {environment} from "../../../env/environment";
+import {environment} from "../../../environment/environment";
 import {CustomerManagementService} from "../../core/services/customer-management.service";
 
 @Component({
