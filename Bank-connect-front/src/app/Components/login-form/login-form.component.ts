@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {environment} from "../../../environment/environment";
 import {CustomerManagementService} from "../../core/services/customer-management.service";
+import {AuthenticationService} from "../../core/services/authentication.service";
 
 @Component({
   selector: 'app-login-form',
@@ -17,7 +18,7 @@ export class LoginFormComponent {
 
   constructor(private http: HttpClient,
               private router: Router,
-              private cstService: CustomerManagementService) {}
+              private authService: AuthenticationService) {}
 
   ngOnInit(): void {
     if(localStorage.getItem("customer") != null){
@@ -33,7 +34,7 @@ export class LoginFormComponent {
     console.log(formData)
 
 
-    this.cstService.loginCustomer(formData)
+    this.authService.loginCustomer(formData)
       .subscribe(response => {
         // @ts-ignore
         const customer = response['customer'];

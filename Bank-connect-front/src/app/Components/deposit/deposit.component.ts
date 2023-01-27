@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {CustomerManagementService} from "../../core/services/customer-management.service";
+import {AccountService} from "../../core/services/account.service";
 
 @Component({
   selector: 'app-deposit',
@@ -15,7 +16,7 @@ export class DepositComponent {
 
   constructor(private http: HttpClient,
               private router: Router,
-              private cstService: CustomerManagementService) {}
+              private accService: AccountService) {}
   deposit(){
 
     // @ts-ignore
@@ -32,7 +33,7 @@ export class DepositComponent {
     console.log(headers)
 
 
-    this.cstService.deposit(formData,headers)
+    this.accService.deposit(formData,headers)
       .subscribe(response => {
         console.log(response)
         this.router.navigate(['/']).then();

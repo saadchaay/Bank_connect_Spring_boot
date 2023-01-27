@@ -15,5 +15,8 @@ export class AuthenticationService {
   agentLogin(credentials: Credentials): Observable<Object> {
     return this.http.post(this.apiUrl.loginAgent, credentials);
   }
+  loginCustomer(formData:Object): Observable<Object>{
+    return this.http.post(this.apiUrl.loginCustomer, formData)
+  }
 
 }
