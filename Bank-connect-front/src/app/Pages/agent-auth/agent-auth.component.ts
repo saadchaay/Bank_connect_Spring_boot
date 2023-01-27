@@ -18,7 +18,7 @@ export class AgentAuthComponent {
     this.authService.agentLogin(agentForm.value).subscribe(
       (res: Object) => {
         localStorage.setItem("auth", JSON.stringify(res));
-        this.router.navigate(['dashboard']).then();
+        this.router.navigate(['/agent/dashboard']).then();
       }, (err: HttpErrorResponse) => {
         console.log(err.message);
       }
