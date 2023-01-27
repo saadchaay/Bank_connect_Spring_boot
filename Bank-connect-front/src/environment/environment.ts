@@ -14,5 +14,6 @@ export const environment = {
     activateAccount: baseUrlApi+'/agent/activate/',
     disableAccount: baseUrlApi+'/agent/disable/',
     deleteAccount: baseUrlApi+'/agent/delete/',
+    getAccount: baseUrlApi+'/customer/account',
   }
 };

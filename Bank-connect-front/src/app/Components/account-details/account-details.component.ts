@@ -32,7 +32,6 @@ export class AccountDetailsComponent implements OnInit{
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-    console.log(headers)
     this.accServise.getAccount(headers).subscribe(
       (response: Account) => {
         this.account = response;
