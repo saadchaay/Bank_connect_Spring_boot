@@ -1,4 +1,4 @@
-const baseUrlApi = 'http://localhost:8080';
+const baseUrlApi = 'https://bank-connect.up.railway.app';
 export const environment = {
   production: false,
   apiUrl: {
